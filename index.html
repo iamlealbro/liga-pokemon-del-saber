@@ -1148,143 +1148,10 @@ footer {
 }
 .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
 
-/* ─── RUTA TIMELINE ─── */
-.route-section {
-  max-width: 1100px;
-  margin: 0 auto;
-  text-align: center;
-}
-.route-section h2 {
-  font-family: 'Press Start 2P', monospace;
-  font-size: clamp(12px, 1.6vw, 16px);
-  color: var(--gold);
-  margin-bottom: 10px;
-  text-shadow: 0 0 16px rgba(255,215,0,0.5);
-}
-.route-subtitle {
-  font-size: 15px;
-  color: rgba(255,255,255,0.65);
-  margin-bottom: 40px;
-}
-.route-timeline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  flex-wrap: nowrap;
-}
-.route-card {
-  flex: 1;
-  min-width: 0;
-  border-radius: 16px;
-  padding: 24px 18px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-  position: relative;
-}
-.route-card:hover {
-  transform: translateY(-8px);
-  filter: brightness(1.15);
-}
-.route-gym-num {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 9px;
-  color: var(--gold);
-  margin-bottom: 10px;
-  letter-spacing: 1px;
-}
-.route-icon {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 10px;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-}
-.route-leader {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
-  color: #fff;
-  margin-bottom: 8px;
-  line-height: 1.5;
-}
-.route-type-badge {
-  display: inline-block;
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.3);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
-  margin-bottom: 10px;
-}
-.route-topic {
-  font-size: 12px;
-  color: rgba(255,255,255,0.8);
-  line-height: 1.5;
-}
-.route-arrow {
-  flex: 0 0 auto;
-  font-size: 2rem;
-  color: #fff;
-  padding: 0 6px;
-  opacity: 0.8;
-  pointer-events: none;
-  flex-shrink: 0;
-}
-
-/* ─── ANIMATION KEYFRAMES ─── */
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
-@keyframes slide-left {
-  from { opacity: 0; transform: translateX(-40px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes slide-right {
-  from { opacity: 0; transform: translateX(40px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-.anim-fade-up     { opacity:0; animation: fade-up 0.8s ease-out forwards; }
-.anim-fade-in     { opacity:0; animation: fade-in 0.8s ease-out forwards; }
-.anim-scale-in    { opacity:0; animation: scale-in 0.7s ease-out forwards; }
-.anim-slide-left  { opacity:0; animation: slide-left 0.8s ease-out forwards; }
-.anim-slide-right { opacity:0; animation: slide-right 0.8s ease-out forwards; }
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
-.delay-5 { animation-delay: 0.5s; }
-.delay-6 { animation-delay: 0.6s; }
-.scroll-anim {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
-}
-.scroll-anim.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.scroll-anim.from-left  { transform: translateX(-30px); }
-.scroll-anim.from-right { transform: translateX(30px); }
-.scroll-anim.scale      { transform: scale(0.92); }
-
 /* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {
   .nav-links { display: none; }
   .hamburger { display: flex; }
-  .route-timeline { flex-direction: column; align-items: center; }
-  .route-card { width: 100%; max-width: 340px; }
-  .route-arrow { transform: rotate(90deg); }
 }
 @media (max-width: 768px) {
   .hero { flex-direction: column; gap: 30px; padding: 30px 16px; }
@@ -1297,8 +1164,6 @@ footer {
 @media (max-width: 600px) {
   .gym-grid { grid-template-columns: 1fr; }
   .medals-grid { grid-template-columns: 1fr; }
-  .route-card { padding: 18px 14px; }
-  .route-icon { font-size: 2.2rem; }
 }
 </style>
 </head>
@@ -1355,15 +1220,15 @@ footer {
   <section class="page active" id="inicio">
     <div class="hero">
       <div class="hero-left">
-        <img class="hero-logo anim-scale-in" src="./images/pokemon-logo.png" alt="Logo Pokémon">
-        <h1 class="hero-title anim-fade-up delay-2">LIGA POKÉMON<br>DEL SABER</h1>
-        <p class="hero-subtitle anim-fade-up delay-3">U.E. 25 de Junio · 6to B · Machala, Ecuador</p>
-        <div class="hero-badge anim-fade-up delay-4">🎓 Ciencias Naturales · 2026</div>
+        <img class="hero-logo" src="./images/pokemon-logo.png" alt="Logo Pokémon">
+        <h1 class="hero-title">LIGA POKÉMON<br>DEL SABER</h1>
+        <p class="hero-subtitle">U.E. 25 de Junio · 6to B · Machala, Ecuador</p>
+        <div class="hero-badge">🎓 Ciencias Naturales · 2026</div>
         <br><br>
-        <button class="btn-cta anim-fade-up delay-5" onclick="navigate('mision')">¡COMENZAR AVENTURA! →</button>
+        <button class="btn-cta" onclick="navigate('mision')">¡COMENZAR AVENTURA! →</button>
       </div>
       <div class="hero-right">
-        <img class="anim-slide-right delay-3" src="./images/oak-starters.png" alt="Profesor Oak y Starters">
+        <img src="./images/oak-starters.png" alt="Profesor Oak y Starters">
       </div>
     </div>
     <div class="stats-section">
@@ -1392,10 +1257,10 @@ footer {
       <h1 class="section-title">🔭 La Misión del Entrenador</h1>
 
       <div class="oak-section">
-        <div class="oak-img-wrap scroll-anim from-left">
+        <div class="oak-img-wrap">
           <img src="./images/oak.png" alt="Profesor Oak">
         </div>
-        <div class="oak-dialog-wrap scroll-anim from-right">
+        <div class="oak-dialog-wrap">
           <h2>Un mensaje del Profesor Oak</h2>
           <div class="dialog-bubble">
             <span id="typewriter-text"></span><span class="cursor-blink" id="tw-cursor"></span>
@@ -1405,7 +1270,7 @@ footer {
 
       <div class="trailer-section">
         <h2>⚡ Tráiler Oficial</h2>
-        <div class="video-wrap scroll-anim scale">
+        <div class="video-wrap">
           <iframe src="https://www.youtube.com/embed/0yg4IJYqZVU"
             title="Liga Pokémon del Saber"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -1414,57 +1279,14 @@ footer {
         <p class="video-caption">🎬 Producido con Adobe Firefly AI</p>
       </div>
 
-      <div class="route-section">
-        <h2>⚔️ Tu Ruta como Entrenador</h2>
-        <p class="route-subtitle">Supera los 4 Gimnasios para convertirte en Maestro Pokémon del Saber</p>
-        <div class="route-timeline">
-
-          <!-- GYM 1 — ROCA -->
-          <div class="route-card scroll-anim" style="background:#8B7355;border:3px solid #A0856C;transition-delay:0ms"
-               onclick="window.open('https://view.genially.com/6a34ef1fd4786b2e6baa5ffa','_blank')">
-            <div class="route-gym-num">GYM 1</div>
-            <span class="route-icon">🪨</span>
-            <div class="route-leader">Brock</div>
-            <div class="route-type-badge">TIPO ROCA</div>
-            <div class="route-topic">Características de los Seres Vivos</div>
-          </div>
-
-          <div class="route-arrow">→</div>
-
-          <!-- GYM 2 — AGUA -->
-          <div class="route-card scroll-anim" style="background:#1565C0;border:3px solid #1E88E5;transition-delay:150ms"
-               onclick="window.open('https://edpuzzle.com/media/6a34f5cc37cfdc0463cfe9b5','_blank')">
-            <div class="route-gym-num">GYM 2</div>
-            <span class="route-icon">💧</span>
-            <div class="route-leader">Misty</div>
-            <div class="route-type-badge">TIPO AGUA</div>
-            <div class="route-topic">Clasificación de los Seres Vivos</div>
-          </div>
-
-          <div class="route-arrow">→</div>
-
-          <!-- GYM 3 — PLANTA -->
-          <div class="route-card scroll-anim" style="background:#2E7D32;border:3px solid #43A047;transition-delay:300ms"
-               onclick="window.open('https://app.nearpod.com/?pin=QG62W','_blank')">
-            <div class="route-gym-num">GYM 3</div>
-            <span class="route-icon">🌿</span>
-            <div class="route-leader">Erika</div>
-            <div class="route-type-badge">TIPO PLANTA</div>
-            <div class="route-topic">Adaptaciones al Medio</div>
-          </div>
-
-          <div class="route-arrow">→</div>
-
-          <!-- GYM 4 — ELÉCTRICO -->
-          <div class="route-card scroll-anim" style="background:#F57F17;border:3px solid #FBC02D;transition-delay:450ms"
-               onclick="window.open('https://iamlealbro.github.io/liga-pokemon-del-saber/batalla-final.html','_blank')">
-            <div class="route-gym-num">GYM 4</div>
-            <span class="route-icon">⚡</span>
-            <div class="route-leader">Lt. Surge</div>
-            <div class="route-type-badge">TIPO ELÉCTRICO</div>
-            <div class="route-topic">Ecosistemas del Ecuador</div>
-          </div>
-
+      <div class="map-section">
+        <h2>Tu ruta hacia el conocimiento</h2>
+        <div class="map-container">
+          <img src="./images/Kanto.png" alt="Mapa Kanto">
+          <div class="map-pin" data-label="GIM. ROCA" style="top:28%;left:20%"></div>
+          <div class="map-pin" data-label="GIM. AGUA" style="top:46%;left:55%;background:#0277bd"></div>
+          <div class="map-pin" data-label="GIM. PLANTA" style="top:66%;left:36%;background:#2e7d32"></div>
+          <div class="map-pin" data-label="GIM. ELEC." style="top:34%;left:70%;background:#f57f17"></div>
         </div>
       </div>
     </div>
@@ -1477,7 +1299,7 @@ footer {
       <div class="gym-grid">
 
         <!-- ROCA -->
-        <div class="gym-card scroll-anim" onclick="window.open('https://view.genially.com/6a34ef1fd4786b2e6baa5ffa','_blank')">
+        <div class="gym-card" onclick="window.open('https://view.genially.com/6a34ef1fd4786b2e6baa5ffa','_blank')">
           <div class="gym-card-header" style="background:linear-gradient(135deg,#8a6e4b,#5d4037)">
             <img class="gym-leader-img" src="./images/brock.png" alt="Brock">
             <div class="gym-header-info">
@@ -1499,7 +1321,7 @@ footer {
         </div>
 
         <!-- AGUA -->
-        <div class="gym-card scroll-anim" onclick="window.open('https://edpuzzle.com/media/6a34f5cc37cfdc0463cfe9b5','_blank')">
+        <div class="gym-card" onclick="window.open('https://edpuzzle.com/media/6a34f5cc37cfdc0463cfe9b5','_blank')">
           <div class="gym-card-header" style="background:linear-gradient(135deg,#0277bd,#01579b)">
             <img class="gym-leader-img" src="./images/misty.png" alt="Misty">
             <div class="gym-header-info">
@@ -1521,7 +1343,7 @@ footer {
         </div>
 
         <!-- PLANTA -->
-        <div class="gym-card scroll-anim" onclick="window.open('https://app.nearpod.com/?pin=QG62W','_blank')">
+        <div class="gym-card" onclick="window.open('https://app.nearpod.com/?pin=QG62W','_blank')">
           <div class="gym-card-header" style="background:linear-gradient(135deg,#2e7d32,#1b5e20)">
             <img class="gym-leader-img" src="./images/erika.png" alt="Erika">
             <div class="gym-header-info">
@@ -1543,7 +1365,7 @@ footer {
         </div>
 
         <!-- ELÉCTRICO -->
-        <div class="gym-card scroll-anim" onclick="window.open('https://iamlealbro.github.io/liga-pokemon-del-saber/batalla-final.html','_blank')">
+        <div class="gym-card" onclick="window.open('https://iamlealbro.github.io/liga-pokemon-del-saber/batalla-final.html','_blank')">
           <div class="gym-card-header" style="background:linear-gradient(135deg,#f57f17,#e65100)">
             <img class="gym-leader-img" src="./images/surge.png" alt="Lt. Surge">
             <div class="gym-header-info">
@@ -1574,7 +1396,7 @@ footer {
       <h1 class="section-title">🏆 Ranking de Entrenadores</h1>
 
       <div class="ranking-table">
-        <div class="rank-row scroll-anim" style="border-color:rgba(204,50,50,0.35)">
+        <div class="rank-row" style="border-color:rgba(204,50,50,0.35)">
           <div class="rank-pos gold">🥇</div>
           <img class="rank-pokemon" src="./images/charmander.png" alt="Charmander">
           <div class="rank-info">
@@ -1585,7 +1407,7 @@ footer {
           <div class="rank-medals">— — —</div>
           <div class="rank-level">NOVATO</div>
         </div>
-        <div class="rank-row scroll-anim" style="border-color:rgba(50,100,204,0.35)">
+        <div class="rank-row" style="border-color:rgba(50,100,204,0.35)">
           <div class="rank-pos silver">🥈</div>
           <img class="rank-pokemon" src="./images/squirtle.png" alt="Squirtle">
           <div class="rank-info">
@@ -1596,7 +1418,7 @@ footer {
           <div class="rank-medals">— — —</div>
           <div class="rank-level">NOVATO</div>
         </div>
-        <div class="rank-row scroll-anim" style="border-color:rgba(50,150,50,0.35)">
+        <div class="rank-row" style="border-color:rgba(50,150,50,0.35)">
           <div class="rank-pos bronze">🥉</div>
           <img class="rank-pokemon" src="./images/bulbasaur.png" alt="Bulbasaur">
           <div class="rank-info">
@@ -1607,7 +1429,7 @@ footer {
           <div class="rank-medals">— — —</div>
           <div class="rank-level">NOVATO</div>
         </div>
-        <div class="rank-row scroll-anim" style="border-color:rgba(255,215,0,0.3)">
+        <div class="rank-row" style="border-color:rgba(255,215,0,0.3)">
           <div class="rank-pos other">4°</div>
           <img class="rank-pokemon" src="./images/pikachu.png" alt="Pikachu">
           <div class="rank-info">
@@ -1618,7 +1440,7 @@ footer {
           <div class="rank-medals">— — —</div>
           <div class="rank-level">NOVATO</div>
         </div>
-        <div class="rank-row scroll-anim" style="border-color:rgba(100,180,50,0.3)">
+        <div class="rank-row" style="border-color:rgba(100,180,50,0.3)">
           <div class="rank-pos other">5°</div>
           <img class="rank-pokemon" src="./images/caterpie.png" alt="Caterpie">
           <div class="rank-info">
@@ -1667,7 +1489,7 @@ footer {
       <h1 class="section-title">🏅 Medallas del Conocimiento</h1>
 
       <div class="medals-grid">
-        <div class="medal-card scroll-anim">
+        <div class="medal-card">
           <span class="medal-emoji">🪨</span>
           <div class="medal-name">MEDALLA ROCA</div>
           <div class="medal-leader">Otorgada por: Brock</div>
@@ -1675,7 +1497,7 @@ footer {
           <div class="medal-criteria">Supera el Entrenamiento 1 con ≥70%</div>
           <span class="medal-status">🔒 Por ganar</span>
         </div>
-        <div class="medal-card scroll-anim">
+        <div class="medal-card">
           <span class="medal-emoji">💧</span>
           <div class="medal-name">MEDALLA CASCADA</div>
           <div class="medal-leader">Otorgada por: Misty</div>
@@ -1683,7 +1505,7 @@ footer {
           <div class="medal-criteria">Supera el Entrenamiento 2 con ≥70%</div>
           <span class="medal-status">🔒 Por ganar</span>
         </div>
-        <div class="medal-card scroll-anim">
+        <div class="medal-card">
           <span class="medal-emoji">🌿</span>
           <div class="medal-name">MEDALLA ARCOÍRIS</div>
           <div class="medal-leader">Otorgada por: Erika</div>
@@ -1691,7 +1513,7 @@ footer {
           <div class="medal-criteria">Supera el Entrenamiento 3 con ≥70%</div>
           <span class="medal-status">🔒 Por ganar</span>
         </div>
-        <div class="medal-card scroll-anim">
+        <div class="medal-card">
           <span class="medal-emoji">⚡</span>
           <div class="medal-name">MEDALLA TRUENO</div>
           <div class="medal-leader">Otorgada por: Lt. Surge</div>
@@ -1774,32 +1596,32 @@ footer {
 
       <h2 class="rules-title">📋 Las Reglas</h2>
       <div class="rules-grid">
-        <div class="rule-card scroll-anim">
+        <div class="rule-card">
           <div class="rule-icon">🟡</div>
           <h3>PokéCoins</h3>
           <p>Se ganan completando actividades individuales (+40), misiones en equipo (+80), medallas (+100) y récords (+20 bonus).</p>
         </div>
-        <div class="rule-card scroll-anim">
+        <div class="rule-card">
           <div class="rule-icon">📈</div>
           <h3>Niveles</h3>
           <p>Novato → Experto → Maestro → Gran Maestro. Cada nivel requiere más PokéCoins acumulados.</p>
         </div>
-        <div class="rule-card scroll-anim">
+        <div class="rule-card">
           <div class="rule-icon">🏅</div>
           <h3>Medallas</h3>
           <p>Se obtienen superando el desafío final de cada Gimnasio del Conocimiento con mínimo 70%.</p>
         </div>
-        <div class="rule-card scroll-anim">
+        <div class="rule-card">
           <div class="rule-icon">👥</div>
           <h3>Equipos</h3>
           <p>5 equipos: Charmander 🔥 · Squirtle 💧 · Bulbasaur 🌿 · Pikachu ⚡ · Caterpie 🐛</p>
         </div>
-        <div class="rule-card scroll-anim">
+        <div class="rule-card">
           <div class="rule-icon">⏰</div>
           <h3>Horarios</h3>
           <p>El ranking se actualiza cada viernes. Las medallas se registran al completar el desafío del gimnasio.</p>
         </div>
-        <div class="rule-card scroll-anim">
+        <div class="rule-card">
           <div class="rule-icon">📱</div>
           <h3>Acceso</h3>
           <p>Desde cualquier dispositivo con internet: celular, tablet o computadora. Sin instalar nada.</p>
@@ -2222,62 +2044,6 @@ function triggerEasterEgg() {
    INIT
 ══════════════════════════════════════ */
 updateNav('inicio');
-</script>
-
-<script>
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-document.querySelectorAll('.scroll-anim').forEach(el => { observer.observe(el); });
-
-const navbar = document.querySelector('nav') || document.querySelector('header');
-if (navbar) {
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      navbar.style.background = 'rgba(5,10,40,0.98)';
-      navbar.style.backdropFilter = 'blur(20px)';
-      navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,0.5)';
-    } else {
-      navbar.style.background = '';
-      navbar.style.backdropFilter = '';
-      navbar.style.boxShadow = '';
-    }
-  });
-}
-
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const target = document.querySelector(link.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
-  });
-});
-
-const cursor = document.createElement('div');
-cursor.style.cssText = `
-  width:20px; height:20px; border-radius:50%;
-  background: radial-gradient(circle at 40% 40%,
-    #ff0000 0%, #ff0000 48%,
-    #000 48%, #000 52%,
-    #ffffff 52%);
-  position:fixed; pointer-events:none;
-  z-index:99999; transition:transform 0.1s ease;
-  transform:translate(-50%,-50%);
-`;
-document.body.appendChild(cursor);
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top  = e.clientY + 'px';
-});
-document.addEventListener('mousedown', () =>
-  cursor.style.transform = 'translate(-50%,-50%) scale(1.5)');
-document.addEventListener('mouseup', () =>
-  cursor.style.transform = 'translate(-50%,-50%) scale(1)');
 </script>
 </body>
 </html>
