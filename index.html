@@ -864,17 +864,21 @@ body {
   box-shadow: 0 24px 48px rgba(255,215,0,0.2);
   border-color: var(--gold);
 }
-.medal-emoji {
-  font-size: 60px;
+.medal-img {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
   display: block;
-  margin-bottom: 12px;
-  animation: medalGlow 2.5s ease-in-out infinite;
-  transition: transform 0.6s ease;
+  margin: 0 auto 14px;
+  animation: medalGlow 2s ease-in-out infinite;
+  transition: transform 0.3s ease;
 }
-.medal-card:hover .medal-emoji { transform: rotateY(360deg); }
+.medal-card:hover .medal-img {
+  transform: rotate(5deg) scale(1.05);
+}
 @keyframes medalGlow {
-  0%,100% { filter: drop-shadow(0 0 8px rgba(255,215,0,0.4)); }
-  50%      { filter: drop-shadow(0 0 20px rgba(255,215,0,0.9)); }
+  0%,100% { filter: drop-shadow(0 0 15px rgba(255,215,0,0.4)); }
+  50%      { filter: drop-shadow(0 0 15px rgba(255,215,0,0.8)); }
 }
 .medal-name {
   font-family: 'Press Start 2P', monospace;
@@ -1489,32 +1493,32 @@ footer {
       <h1 class="section-title">🏅 Medallas del Conocimiento</h1>
 
       <div class="medals-grid">
-        <div class="medal-card">
-          <span class="medal-emoji">🪨</span>
+        <div class="medal-card scroll-anim">
+          <img class="medal-img" src="./images/medalla-roca.png" alt="Medalla Roca">
           <div class="medal-name">MEDALLA ROCA</div>
           <div class="medal-leader">Otorgada por: Brock</div>
           <div class="medal-desc">Demuestras conocer las funciones vitales de los seres vivos</div>
           <div class="medal-criteria">Supera el Entrenamiento 1 con ≥70%</div>
           <span class="medal-status">🔒 Por ganar</span>
         </div>
-        <div class="medal-card">
-          <span class="medal-emoji">💧</span>
+        <div class="medal-card scroll-anim">
+          <img class="medal-img" src="./images/medalla-cascada.png" alt="Medalla Cascada">
           <div class="medal-name">MEDALLA CASCADA</div>
           <div class="medal-leader">Otorgada por: Misty</div>
           <div class="medal-desc">Demuestras clasificar los seres vivos en los 5 reinos</div>
           <div class="medal-criteria">Supera el Entrenamiento 2 con ≥70%</div>
           <span class="medal-status">🔒 Por ganar</span>
         </div>
-        <div class="medal-card">
-          <span class="medal-emoji">🌿</span>
+        <div class="medal-card scroll-anim">
+          <img class="medal-img" src="./images/medalla-arcoiris.png" alt="Medalla Arcoíris">
           <div class="medal-name">MEDALLA ARCOÍRIS</div>
           <div class="medal-leader">Otorgada por: Erika</div>
           <div class="medal-desc">Demuestras comprender las adaptaciones al medio</div>
           <div class="medal-criteria">Supera el Entrenamiento 3 con ≥70%</div>
           <span class="medal-status">🔒 Por ganar</span>
         </div>
-        <div class="medal-card">
-          <span class="medal-emoji">⚡</span>
+        <div class="medal-card scroll-anim">
+          <img class="medal-img" src="./images/medalla-trueno.png" alt="Medalla Trueno">
           <div class="medal-name">MEDALLA TRUENO</div>
           <div class="medal-leader">Otorgada por: Lt. Surge</div>
           <div class="medal-desc">Eres guardián de los ecosistemas del Ecuador</div>
