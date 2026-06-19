@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liga Pokémon del Saber — U.E. 25 de Junio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #FFD700;
+  --red: #CC0000;
+  --blue-deep: #0a0f3c;
+  --blue-mid: #1a237e;
+  --blue-light: #0d47a1;
+  --glass: rgba(255,255,255,0.07);
+  --glass-border: rgba(255,215,0,0.25);
+  --transition: 0.3s ease;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--blue-deep);
+  color: #fff;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─── CUSTOM CURSOR ─── */
+#cursor {
+  width: 28px; height: 28px;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+}
+#cursor-trail {
+  position: fixed; top: 0; left: 0;
+  pointer-events: none;
+  z-index: 99998;
+}
+.trail-dot {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: trailFade 0.5s ease forwards;
+}
+@keyframes trailFade { to { opacity: 0; transform: translate(-50%,-50%) scale(0); } }
+
+/* ─── CANVAS BACKGROUND ─── */
+#bg-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ─── NAVBAR ─── */
+#navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(10,15,60,0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,215,0,0.2);
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.nav-logo img {
+  height: 40px;
+  mix-blend-mode: multiply;
+  border-radius: 4px;
+}
+.nav-logo-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(255,215,0,0.6);
+  line-height: 1.4;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  transition: all var(--transition);
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 10px; right: 10px;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform var(--transition);
+}
+.nav-links a:hover, .nav-links a.active { color: var(--gold); }
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--gold);
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 64px; left: 0; right: 0;
+  background: rgba(10,15,60,0.98);
+  backdrop-filter: blur(16px);
+  z-index: 999;
+  padding: 16px;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid var(--glass-border);
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+.mobile-menu a:hover, .mobile-menu a.active {
+  color: var(--gold);
+  background: rgba(255,215,0,0.1);
+}
+
+/* ─── MAIN WRAPPER ─── */
+#app {
+  position: relative;
+  z-index: 1;
+  padding-top: 64px;
+}
+
+/* ─── PAGE SECTIONS ─── */
+.page {
+  display: none;
+  min-height: calc(100vh - 64px);
+}
+.page.active { display: block; }
+
+/* ─── PAGE 1: INICIO ─── */
+#inicio {
+  background: radial-gradient(ellipse at center, #1a237e 0%, #0d47a1 40%, #0a0f3c 100%);
+}
+.hero {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+.hero-left {
+  flex: 1;
+  min-width: 280px;
+  max-width: 520px;
+  text-align: center;
+}
+.hero-logo {
+  width: 300px;
+  max-width: 100%;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 30px rgba(255,215,0,0.4));
+  animation: logoFloat 4s ease-in-out infinite;
+  margin-bottom: 20px;
+}
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+.hero-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(13px, 2.2vw, 21px);
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,215,0,0.4);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.hero-subtitle {
+  font-size: 16px;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.hero-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 28px;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255,215,0,0.3); }
+  50%       { box-shadow: 0 0 20px rgba(255,215,0,0.7); }
+}
+.btn-cta {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  padding: 14px 28px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition);
+  box-shadow: 0 4px 20px rgba(204,0,0,0.4);
+}
+.btn-cta:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 30px rgba(204,0,0,0.7);
+  background: #e60000;
+}
+.hero-right {
+  flex: 1;
+  min-width: 280px;
+  max-width: 420px;
+  display: flex;
+  justify-content: center;
+}
+.hero-right img {
+  width: 100%;
+  max-width: 380px;
+  mix-blend-mode: multiply;
+  animation: heroFloat 5s ease-in-out infinite;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+}
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%       { transform: translateY(-18px) rotate(1deg); }
+}
+.stats-section {
+  padding: 60px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.stat-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,215,0,0.25);
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: all var(--transition);
+  cursor: default;
+  animation: fadeUp 0.6s ease both;
+}
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.2s; }
+.stat-card:nth-child(4) { animation-delay: 0.3s; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(255,215,0,0.2);
+  border-color: var(--gold);
+}
+.stat-number {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 28px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 700;
+}
+
+/* ─── PAGE 2: MISIÓN ─── */
+#mision {
+  background: linear-gradient(160deg, #0a0f3c 0%, #1a237e 100%);
+  padding: 60px 24px 80px;
+}
+.section-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(13px, 2vw, 20px);
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 50px;
+  text-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+.oak-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto 70px;
+  flex-wrap: wrap;
+}
+.oak-img-wrap {
+  flex: 0 0 260px;
+  display: flex;
+  justify-content: center;
+}
+.oak-img-wrap img {
+  width: 260px;
+  max-width: 100%;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6));
+  animation: slideInLeft 0.8s ease both;
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.oak-dialog-wrap {
+  flex: 1;
+  min-width: 260px;
+  animation: slideInRight 0.8s ease both;
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.oak-dialog-wrap h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.dialog-bubble {
+  background: rgba(10,30,80,0.85);
+  border: 2px solid var(--gold);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  font-size: 15px;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.9);
+  min-height: 200px;
+}
+.dialog-bubble::before {
+  content: '';
+  position: absolute;
+  left: -18px; top: 32px;
+  width: 0; height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 18px solid var(--gold);
+}
+.dialog-bubble::after {
+  content: '';
+  position: absolute;
+  left: -13px; top: 34px;
+  width: 0; height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 13px solid rgba(10,30,80,0.85);
+}
+.cursor-blink {
+  display: inline-block;
+  width: 2px; height: 1em;
+  background: var(--gold);
+  margin-left: 2px;
+  animation: blink 0.7s step-end infinite;
+  vertical-align: text-bottom;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.trailer-section {
+  max-width: 860px;
+  margin: 0 auto 70px;
+  text-align: center;
+}
+.trailer-section h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 15px;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+.video-wrap {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  border: 3px solid var(--gold);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(255,215,0,0.3), 0 0 0 1px rgba(255,215,0,0.1);
+}
+.video-wrap iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none;
+}
+.video-caption {
+  margin-top: 12px;
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+}
+.map-section {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+.map-section h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+.map-container {
+  position: relative;
+  display: inline-block;
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  max-width: 100%;
+}
+.map-container img {
+  width: 100%;
+  max-width: 700px;
+  display: block;
+}
+.map-pin {
+  position: absolute;
+  width: 18px; height: 18px;
+  background: var(--red);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 2px solid #fff;
+  animation: pinBounce 1.5s ease-in-out infinite;
+  cursor: pointer;
+  z-index: 5;
+}
+.map-pin::after {
+  content: attr(data-label);
+  position: absolute;
+  top: -30px; left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  background: rgba(10,15,60,0.95);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 8px;
+  font-family: 'Press Start 2P', monospace;
+  padding: 3px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.map-pin:hover::after { opacity: 1; }
+.map-pin:nth-child(2) { animation-delay: 0.3s; }
+.map-pin:nth-child(3) { animation-delay: 0.6s; }
+.map-pin:nth-child(4) { animation-delay: 0.9s; }
+@keyframes pinBounce {
+  0%, 100% { transform: rotate(-45deg) translateY(0); }
+  50%       { transform: rotate(-45deg) translateY(-6px); }
+}
+
+/* ─── PAGE 3: GIMNASIOS ─── */
+#gimnasios {
+  background: linear-gradient(160deg, #0d1b2a 0%, #1b263b 100%);
+  padding: 60px 24px 80px;
+}
+.gym-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.gym-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+.gym-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(255,215,0,0.15);
+  border-color: rgba(255,215,0,0.5);
+}
+.gym-card-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.gym-leader-img {
+  width: 80px; height: 80px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  padding: 4px;
+  flex-shrink: 0;
+}
+.gym-header-info h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.gym-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.gym-number { font-size: 11px; color: rgba(255,255,255,0.5); }
+.gym-card-body { padding: 0 20px 20px; }
+.gym-topic {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.gym-learnings {
+  list-style: none;
+  margin-bottom: 14px;
+}
+.gym-learnings li {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  padding: 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.gym-learnings li::before {
+  content: '✦';
+  color: var(--gold);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.gym-pokemon-img {
+  width: 90px; height: 90px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  display: block;
+  margin: 0 auto 14px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+  animation: pkFloat 3s ease-in-out infinite;
+}
+@keyframes pkFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+.btn-gym {
+  display: block;
+  width: 100%;
+  background: var(--red);
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition);
+}
+.btn-gym:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 8px 24px rgba(204,0,0,0.5);
+}
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open {
+  display: flex;
+  animation: mFadeIn 0.25s ease;
+}
+@keyframes mFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-box {
+  background: rgba(12,18,60,0.97);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 920px;
+  max-height: 92vh;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  animation: mScale 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+@keyframes mScale {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,215,0,0.2);
+  flex-shrink: 0;
+}
+.modal-header img {
+  width: 42px; height: 42px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  padding: 2px;
+  flex-shrink: 0;
+}
+.modal-header h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  flex: 1;
+  line-height: 1.5;
+}
+.modal-close {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 18px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.modal-close:hover { background: var(--red); border-color: var(--red); }
+.modal-iframe {
+  width: 100%;
+  flex: 1;
+  border: none;
+  display: block;
+  min-height: 0;
+}
+
+/* ─── PAGE 4: RANKING ─── */
+#ranking {
+  background: linear-gradient(160deg, #1a0533 0%, #2d0a5e 100%);
+  padding: 60px 24px 80px;
+}
+.ranking-table {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 14px 18px;
+  transition: all var(--transition);
+  animation: rankIn 0.5s ease both;
+}
+.rank-row:nth-child(1) { animation-delay: 0s; }
+.rank-row:nth-child(2) { animation-delay: 0.07s; }
+.rank-row:nth-child(3) { animation-delay: 0.14s; }
+.rank-row:nth-child(4) { animation-delay: 0.21s; }
+.rank-row:nth-child(5) { animation-delay: 0.28s; }
+@keyframes rankIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.rank-row:hover {
+  transform: translateX(6px);
+  background: rgba(255,255,255,0.1);
+  border-color: var(--glass-border);
+}
+.rank-pos {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 18px;
+  min-width: 40px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.rank-pos.gold   { color: #FFD700; text-shadow: 0 0 12px rgba(255,215,0,0.8); }
+.rank-pos.silver { color: #C0C0C0; }
+.rank-pos.bronze { color: #CD7F32; }
+.rank-pos.other  { color: rgba(255,255,255,0.4); font-size: 14px; }
+.rank-pokemon {
+  width: 48px; height: 48px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  padding: 3px;
+  flex-shrink: 0;
+}
+.rank-info { flex: 1; min-width: 0; }
+.rank-name {
+  font-weight: 800;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.rank-bar-wrap {
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  height: 7px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+.rank-bar {
+  height: 100%;
+  border-radius: 20px;
+  width: 0%;
+  transition: width 1.5s ease;
+}
+.rank-coins { font-size: 11px; color: rgba(255,255,255,0.45); }
+.rank-medals { font-size: 16px; min-width: 50px; text-align: center; flex-shrink: 0; }
+.rank-level {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  min-width: 68px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.ranking-note {
+  text-align: center;
+  margin: 16px 0 40px;
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+}
+.points-section { max-width: 900px; margin: 0 auto; }
+.points-section h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 28px;
+}
+.points-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 16px;
+}
+.points-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 20px 16px;
+  text-align: center;
+  transition: all var(--transition);
+}
+.points-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(255,215,0,0.15);
+}
+.points-icon { font-size: 30px; margin-bottom: 8px; }
+.points-val {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.points-desc { font-size: 13px; color: rgba(255,255,255,0.7); }
+
+/* ─── PAGE 5: MEDALLAS ─── */
+#medallas {
+  background: linear-gradient(160deg, #1a1000 0%, #2d1f00 100%);
+  padding: 60px 24px 80px;
+}
+.medals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+  gap: 28px;
+  max-width: 1000px;
+  margin: 0 auto 70px;
+}
+.medal-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,215,0,0.2);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition);
+  animation: fadeUp 0.6s ease both;
+}
+.medal-card:nth-child(1) { animation-delay: 0s; }
+.medal-card:nth-child(2) { animation-delay: 0.1s; }
+.medal-card:nth-child(3) { animation-delay: 0.2s; }
+.medal-card:nth-child(4) { animation-delay: 0.3s; }
+.medal-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.07), transparent 70%);
+  pointer-events: none;
+}
+.medal-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px rgba(255,215,0,0.2);
+  border-color: var(--gold);
+}
+.medal-emoji {
+  font-size: 60px;
+  display: block;
+  margin-bottom: 12px;
+  animation: medalGlow 2.5s ease-in-out infinite;
+  transition: transform 0.6s ease;
+}
+.medal-card:hover .medal-emoji { transform: rotateY(360deg); }
+@keyframes medalGlow {
+  0%,100% { filter: drop-shadow(0 0 8px rgba(255,215,0,0.4)); }
+  50%      { filter: drop-shadow(0 0 20px rgba(255,215,0,0.9)); }
+}
+.medal-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.medal-leader { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+.medal-desc   { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 12px; }
+.medal-criteria { font-size: 12px; color: rgba(255,215,0,0.7); margin-bottom: 14px; font-style: italic; }
+.medal-status {
+  display: inline-block;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.5);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.hall-of-fame {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+  background: rgba(255,215,0,0.04);
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 24px;
+  padding: 48px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.hall-of-fame h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 17px;
+  color: var(--gold);
+  margin-bottom: 24px;
+  text-shadow: 0 0 20px rgba(255,215,0,0.6);
+}
+.hall-pikachu {
+  width: 150px;
+  mix-blend-mode: multiply;
+  animation: hallFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 20px rgba(255,215,0,0.4));
+  margin-bottom: 20px;
+}
+@keyframes hallFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+.hall-text { font-size: 16px; line-height: 1.8; color: rgba(255,255,255,0.8); }
+.gp {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: gpFloat var(--dur,4s) ease-in-out infinite;
+  opacity: 0.5;
+  left: var(--x,50%);
+  bottom: 0;
+}
+@keyframes gpFloat {
+  0%   { transform: translateY(0) scale(1); opacity: 0.5; }
+  100% { transform: translateY(-220px) scale(0); opacity: 0; }
+}
+
+/* ─── PAGE 6: CÓMO FUNCIONA ─── */
+#como-funciona {
+  background: linear-gradient(160deg, #001f3f 0%, #003366 100%);
+  padding: 60px 24px 80px;
+}
+.story-card {
+  max-width: 800px;
+  margin: 0 auto 60px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 32px;
+  font-size: 15px;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.85);
+}
+.story-card h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.timeline {
+  max-width: 700px;
+  margin: 0 auto 70px;
+  position: relative;
+  padding-left: 52px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 21px; top: 18px; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--gold), rgba(255,215,0,0.05));
+}
+.timeline-step {
+  position: relative;
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.timeline-step.visible { opacity: 1; transform: translateX(0); }
+.step-circle {
+  position: absolute;
+  left: -52px; top: 0;
+  width: 36px; height: 36px;
+  background: var(--blue-deep);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--gold);
+}
+.timeline-step-icon { font-size: 22px; margin-bottom: 4px; }
+.timeline-step h3 { font-weight: 800; font-size: 16px; color: var(--gold); margin-bottom: 4px; }
+.timeline-step p  { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.rules-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 28px;
+}
+.rule-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all var(--transition);
+  animation: fadeUp 0.5s ease both;
+}
+.rule-card:nth-child(1){ animation-delay:0s; }
+.rule-card:nth-child(2){ animation-delay:.05s; }
+.rule-card:nth-child(3){ animation-delay:.1s; }
+.rule-card:nth-child(4){ animation-delay:.15s; }
+.rule-card:nth-child(5){ animation-delay:.2s; }
+.rule-card:nth-child(6){ animation-delay:.25s; }
+.rule-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(255,215,0,0.1);
+}
+.rule-icon { font-size: 28px; margin-bottom: 10px; }
+.rule-card h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.rule-card p { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.7; }
+
+/* ─── AUDIO BUTTON ─── */
+#audio-btn {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 500;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: rgba(10,15,60,0.9);
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+#audio-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(255,215,0,0.4);
+}
+
+/* ─── EASTER EGG ─── */
+#easter-egg-canvas {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+}
+#easter-egg-canvas.active { display: block; }
+#easter-msg {
+  display: none;
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9001;
+  background: rgba(10,15,60,0.96);
+  border: 3px solid var(--gold);
+  border-radius: 20px;
+  padding: 28px 40px;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 18px;
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(255,215,0,0.8);
+  box-shadow: 0 0 60px rgba(255,215,0,0.4);
+  pointer-events: none;
+  animation: msgPop 0.4s ease;
+}
+@keyframes msgPop {
+  from { transform: translate(-50%,-50%) scale(0.5); opacity: 0; }
+  to   { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+}
+#easter-msg.active { display: block; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: #050a1a;
+  border-top: 1px solid rgba(255,215,0,0.12);
+  padding: 48px 24px 28px;
+  position: relative;
+  z-index: 1;
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.footer-brand .footer-logo {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.footer-brand .footer-logo img { height: 34px; mix-blend-mode: multiply; }
+.footer-brand .footer-logo span {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px; color: var(--gold);
+}
+.footer-brand p { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.8; }
+.footer-links h4 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px; color: var(--gold); margin-bottom: 14px;
+}
+.footer-links ul { list-style: none; }
+.footer-links ul li { margin-bottom: 8px; }
+.footer-links ul li a {
+  font-size: 13px; color: rgba(255,255,255,0.45);
+  text-decoration: none; cursor: pointer;
+  transition: color var(--transition);
+}
+.footer-links ul li a:hover { color: var(--gold); }
+.footer-bottom {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.footer-powered {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+}
+@media (max-width: 768px) {
+  .hero { flex-direction: column; gap: 30px; padding: 30px 16px; }
+  .hero-right { display: none; }
+  .oak-section { flex-direction: column; align-items: center; }
+  .dialog-bubble::before, .dialog-bubble::after { display: none; }
+  .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+  .rank-level, .rank-medals { display: none; }
+}
+@media (max-width: 480px) {
+  .gym-grid { grid-template-columns: 1fr; }
+  .medals-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- CANVAS BACKGROUND -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor">
+  <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+    <circle cx="14" cy="14" r="13" fill="none" stroke="#000" stroke-width="1.5"/>
+    <path d="M1,14 A13,13 0 0,1 27,14 Z" fill="#CC0000"/>
+    <path d="M1,14 A13,13 0 0,0 27,14 Z" fill="#fff"/>
+    <line x1="1" y1="14" x2="27" y2="14" stroke="#111" stroke-width="2"/>
+    <circle cx="14" cy="14" r="4.5" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  </svg>
+</div>
+<div id="cursor-trail"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo" onclick="navigate('inicio')">
+    <img src="./images/pokemon-logo.jpeg" alt="Pokémon Logo">
+    <div class="nav-logo-text">Liga del<br>Saber</div>
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="navigate('inicio')" data-page="inicio">Inicio</a></li>
+    <li><a onclick="navigate('mision')" data-page="mision">La Misión</a></li>
+    <li><a onclick="navigate('gimnasios')" data-page="gimnasios">Gimnasios</a></li>
+    <li><a onclick="navigate('ranking')" data-page="ranking">Ranking</a></li>
+    <li><a onclick="navigate('medallas')" data-page="medallas">Medallas</a></li>
+    <li><a onclick="navigate('como-funciona')" data-page="como-funciona">Cómo Funciona</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a onclick="navigate('inicio');closeMobile()" data-page="inicio">🏠 Inicio</a>
+  <a onclick="navigate('mision');closeMobile()" data-page="mision">🔭 La Misión</a>
+  <a onclick="navigate('gimnasios');closeMobile()" data-page="gimnasios">⚔️ Gimnasios</a>
+  <a onclick="navigate('ranking');closeMobile()" data-page="ranking">🏆 Ranking</a>
+  <a onclick="navigate('medallas');closeMobile()" data-page="medallas">🏅 Medallas</a>
+  <a onclick="navigate('como-funciona');closeMobile()" data-page="como-funciona">📖 Cómo Funciona</a>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- ══ PÁGINA 1: INICIO ══ -->
+  <section class="page active" id="inicio">
+    <div class="hero">
+      <div class="hero-left">
+        <img class="hero-logo" src="./images/pokemon-logo.jpeg" alt="Logo Pokémon">
+        <h1 class="hero-title">LIGA POKÉMON<br>DEL SABER</h1>
+        <p class="hero-subtitle">U.E. 25 de Junio · 6to B · Machala, Ecuador</p>
+        <div class="hero-badge">🎓 Ciencias Naturales · 2026</div>
+        <br><br>
+        <button class="btn-cta" onclick="navigate('mision')">¡COMENZAR AVENTURA! →</button>
+      </div>
+      <div class="hero-right">
+        <img src="./images/oak-starters.jpeg" alt="Profesor Oak y Starters">
+      </div>
+    </div>
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-number">4</div>
+        <div class="stat-label">🏆 Gimnasios</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">6</div>
+        <div class="stat-label">📚 Actividades</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">25</div>
+        <div class="stat-label">👥 Entrenadores</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">4</div>
+        <div class="stat-label">🏅 Medallas</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PÁGINA 2: MISIÓN ══ -->
+  <section class="page" id="mision">
+    <div style="max-width:1100px;margin:0 auto;padding:60px 24px 80px">
+      <h1 class="section-title">🔭 La Misión del Entrenador</h1>
+
+      <div class="oak-section">
+        <div class="oak-img-wrap">
+          <img src="./images/oak.jpeg" alt="Profesor Oak">
+        </div>
+        <div class="oak-dialog-wrap">
+          <h2>Un mensaje del Profesor Oak</h2>
+          <div class="dialog-bubble">
+            <span id="typewriter-text"></span><span class="cursor-blink" id="tw-cursor"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="trailer-section">
+        <h2>⚡ Tráiler Oficial</h2>
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/0yg4IJYqZVU"
+            title="Liga Pokémon del Saber"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        <p class="video-caption">🎬 Producido con Adobe Firefly AI</p>
+      </div>
+
+      <div class="map-section">
+        <h2>Tu ruta hacia el conocimiento</h2>
+        <div class="map-container">
+          <img src="./images/kanto-map.jpeg" alt="Mapa Kanto">
+          <div class="map-pin" data-label="GIM. ROCA" style="top:28%;left:20%"></div>
+          <div class="map-pin" data-label="GIM. AGUA" style="top:46%;left:55%;background:#0277bd"></div>
+          <div class="map-pin" data-label="GIM. PLANTA" style="top:66%;left:36%;background:#2e7d32"></div>
+          <div class="map-pin" data-label="GIM. ELEC." style="top:34%;left:70%;background:#f57f17"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PÁGINA 3: GIMNASIOS ══ -->
+  <section class="page" id="gimnasios">
+    <div style="max-width:1100px;margin:0 auto;padding:60px 24px 80px">
+      <h1 class="section-title">⚔️ Los 4 Gimnasios del Conocimiento</h1>
+      <div class="gym-grid">
+
+        <!-- ROCA -->
+        <div class="gym-card" onclick="openModal('modal-roca')">
+          <div class="gym-card-header" style="background:linear-gradient(135deg,#8a6e4b,#5d4037)">
+            <img class="gym-leader-img" src="./images/brock.jpeg" alt="Brock">
+            <div class="gym-header-info">
+              <div class="gym-badge" style="background:rgba(0,0,0,0.3)">🪨 Tipo Roca</div>
+              <h3>Brock</h3>
+              <div class="gym-number">Gimnasio N° 1</div>
+            </div>
+          </div>
+          <div class="gym-card-body">
+            <div class="gym-topic">Características de los Seres Vivos</div>
+            <ul class="gym-learnings">
+              <li>Nutrición y metabolismo</li>
+              <li>Relación con el entorno</li>
+              <li>Reproducción y ciclo de vida</li>
+            </ul>
+            <img class="gym-pokemon-img" src="./images/sandshrew.jpeg" alt="Sandshrew">
+            <button class="btn-gym" onclick="event.stopPropagation();openModal('modal-roca')">⚔️ ENTRAR AL GIMNASIO</button>
+          </div>
+        </div>
+
+        <!-- AGUA -->
+        <div class="gym-card" onclick="openModal('modal-agua')">
+          <div class="gym-card-header" style="background:linear-gradient(135deg,#0277bd,#01579b)">
+            <img class="gym-leader-img" src="./images/misty.jpeg" alt="Misty">
+            <div class="gym-header-info">
+              <div class="gym-badge" style="background:rgba(0,0,0,0.3)">💧 Tipo Agua</div>
+              <h3>Misty</h3>
+              <div class="gym-number">Gimnasio N° 2</div>
+            </div>
+          </div>
+          <div class="gym-card-body">
+            <div class="gym-topic">Clasificación de los Seres Vivos</div>
+            <ul class="gym-learnings">
+              <li>Los 5 reinos de la vida</li>
+              <li>Reino Animalia y Plantae</li>
+              <li>Hongos, Protistas, Moneras</li>
+            </ul>
+            <img class="gym-pokemon-img" src="./images/gyarados.jpeg" alt="Gyarados">
+            <button class="btn-gym" onclick="event.stopPropagation();openModal('modal-agua')">⚔️ ENTRAR AL GIMNASIO</button>
+          </div>
+        </div>
+
+        <!-- PLANTA -->
+        <div class="gym-card" onclick="openModal('modal-planta')">
+          <div class="gym-card-header" style="background:linear-gradient(135deg,#2e7d32,#1b5e20)">
+            <img class="gym-leader-img" src="./images/erika.jpeg" alt="Erika">
+            <div class="gym-header-info">
+              <div class="gym-badge" style="background:rgba(0,0,0,0.3)">🌿 Tipo Planta</div>
+              <h3>Erika</h3>
+              <div class="gym-number">Gimnasio N° 3</div>
+            </div>
+          </div>
+          <div class="gym-card-body">
+            <div class="gym-topic">Adaptaciones al Medio</div>
+            <ul class="gym-learnings">
+              <li>Adaptación morfológica</li>
+              <li>Adaptación fisiológica</li>
+              <li>Adaptación conductual</li>
+            </ul>
+            <img class="gym-pokemon-img" src="./images/caterpie.jpeg" alt="Caterpie">
+            <button class="btn-gym" onclick="event.stopPropagation();openModal('modal-planta')">⚔️ ENTRAR AL GIMNASIO</button>
+          </div>
+        </div>
+
+        <!-- ELÉCTRICO -->
+        <div class="gym-card" onclick="openModal('modal-elec')">
+          <div class="gym-card-header" style="background:linear-gradient(135deg,#f57f17,#e65100)">
+            <img class="gym-leader-img" src="./images/surge.jpeg" alt="Lt. Surge">
+            <div class="gym-header-info">
+              <div class="gym-badge" style="background:rgba(0,0,0,0.3)">⚡ Tipo Eléctrico</div>
+              <h3>Lt. Surge</h3>
+              <div class="gym-number">Gimnasio N° 4</div>
+            </div>
+          </div>
+          <div class="gym-card-body">
+            <div class="gym-topic">Ecosistemas del Ecuador</div>
+            <ul class="gym-learnings">
+              <li>Costa: manglares y bosques secos</li>
+              <li>Sierra: páramo andino</li>
+              <li>Amazonía y Galápagos</li>
+            </ul>
+            <img class="gym-pokemon-img" src="./images/zapdos.jpeg" alt="Zapdos">
+            <button class="btn-gym" onclick="event.stopPropagation();openModal('modal-elec')">⚔️ ENTRAR AL GIMNASIO</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PÁGINA 4: RANKING ══ -->
+  <section class="page" id="ranking">
+    <div style="max-width:1000px;margin:0 auto;padding:60px 24px 80px">
+      <h1 class="section-title">🏆 Ranking de Entrenadores</h1>
+
+      <div class="ranking-table">
+        <div class="rank-row" style="border-color:rgba(204,50,50,0.35)">
+          <div class="rank-pos gold">🥇</div>
+          <img class="rank-pokemon" src="./images/charmander.jpeg" alt="Charmander">
+          <div class="rank-info">
+            <div class="rank-name" style="color:#ff7b7b">🔥 Team Charmander</div>
+            <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#ff7b7b,#cc0000)"></div></div>
+            <div class="rank-coins">0 PokéCoins</div>
+          </div>
+          <div class="rank-medals">— — —</div>
+          <div class="rank-level">NOVATO</div>
+        </div>
+        <div class="rank-row" style="border-color:rgba(50,100,204,0.35)">
+          <div class="rank-pos silver">🥈</div>
+          <img class="rank-pokemon" src="./images/squirtle.jpeg" alt="Squirtle">
+          <div class="rank-info">
+            <div class="rank-name" style="color:#6dc8ff">💧 Team Squirtle</div>
+            <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#6dc8ff,#0277bd)"></div></div>
+            <div class="rank-coins">0 PokéCoins</div>
+          </div>
+          <div class="rank-medals">— — —</div>
+          <div class="rank-level">NOVATO</div>
+        </div>
+        <div class="rank-row" style="border-color:rgba(50,150,50,0.35)">
+          <div class="rank-pos bronze">🥉</div>
+          <img class="rank-pokemon" src="./images/bulbasaur.jpeg" alt="Bulbasaur">
+          <div class="rank-info">
+            <div class="rank-name" style="color:#7eff96">🌿 Team Bulbasaur</div>
+            <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#7eff96,#2e7d32)"></div></div>
+            <div class="rank-coins">0 PokéCoins</div>
+          </div>
+          <div class="rank-medals">— — —</div>
+          <div class="rank-level">NOVATO</div>
+        </div>
+        <div class="rank-row" style="border-color:rgba(255,215,0,0.3)">
+          <div class="rank-pos other">4°</div>
+          <img class="rank-pokemon" src="./images/pikachu.jpeg" alt="Pikachu">
+          <div class="rank-info">
+            <div class="rank-name" style="color:#FFD700">⚡ Team Pikachu</div>
+            <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#FFD700,#f57f17)"></div></div>
+            <div class="rank-coins">0 PokéCoins</div>
+          </div>
+          <div class="rank-medals">— — —</div>
+          <div class="rank-level">NOVATO</div>
+        </div>
+        <div class="rank-row" style="border-color:rgba(100,180,50,0.3)">
+          <div class="rank-pos other">5°</div>
+          <img class="rank-pokemon" src="./images/caterpie.jpeg" alt="Caterpie">
+          <div class="rank-info">
+            <div class="rank-name" style="color:#b8e994">🐛 Team Caterpie</div>
+            <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#b8e994,#1b5e20)"></div></div>
+            <div class="rank-coins">0 PokéCoins</div>
+          </div>
+          <div class="rank-medals">— — —</div>
+          <div class="rank-level">NOVATO</div>
+        </div>
+      </div>
+
+      <p class="ranking-note">📅 Ranking actualizado cada viernes</p>
+
+      <div class="points-section">
+        <h2>Sistema de Puntos</h2>
+        <div class="points-grid">
+          <div class="points-card">
+            <div class="points-icon">📝</div>
+            <div class="points-val">+40</div>
+            <div class="points-desc">Actividad entregada</div>
+          </div>
+          <div class="points-card">
+            <div class="points-icon">👥</div>
+            <div class="points-val">+80</div>
+            <div class="points-desc">Misión en equipo</div>
+          </div>
+          <div class="points-card">
+            <div class="points-icon">🏅</div>
+            <div class="points-val">+100</div>
+            <div class="points-desc">Medalla de gimnasio</div>
+          </div>
+          <div class="points-card">
+            <div class="points-icon">⭐</div>
+            <div class="points-val">+20</div>
+            <div class="points-desc">Récord en Batalla Final</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PÁGINA 5: MEDALLAS ══ -->
+  <section class="page" id="medallas">
+    <div style="max-width:1100px;margin:0 auto;padding:60px 24px 80px">
+      <h1 class="section-title">🏅 Medallas del Conocimiento</h1>
+
+      <div class="medals-grid">
+        <div class="medal-card">
+          <span class="medal-emoji">🪨</span>
+          <div class="medal-name">MEDALLA ROCA</div>
+          <div class="medal-leader">Otorgada por: Brock</div>
+          <div class="medal-desc">Demuestras conocer las funciones vitales de los seres vivos</div>
+          <div class="medal-criteria">Supera el Entrenamiento 1 con ≥70%</div>
+          <span class="medal-status">🔒 Por ganar</span>
+        </div>
+        <div class="medal-card">
+          <span class="medal-emoji">💧</span>
+          <div class="medal-name">MEDALLA CASCADA</div>
+          <div class="medal-leader">Otorgada por: Misty</div>
+          <div class="medal-desc">Demuestras clasificar los seres vivos en los 5 reinos</div>
+          <div class="medal-criteria">Supera el Entrenamiento 2 con ≥70%</div>
+          <span class="medal-status">🔒 Por ganar</span>
+        </div>
+        <div class="medal-card">
+          <span class="medal-emoji">🌿</span>
+          <div class="medal-name">MEDALLA ARCOÍRIS</div>
+          <div class="medal-leader">Otorgada por: Erika</div>
+          <div class="medal-desc">Demuestras comprender las adaptaciones al medio</div>
+          <div class="medal-criteria">Supera el Entrenamiento 3 con ≥70%</div>
+          <span class="medal-status">🔒 Por ganar</span>
+        </div>
+        <div class="medal-card">
+          <span class="medal-emoji">⚡</span>
+          <div class="medal-name">MEDALLA TRUENO</div>
+          <div class="medal-leader">Otorgada por: Lt. Surge</div>
+          <div class="medal-desc">Eres guardián de los ecosistemas del Ecuador</div>
+          <div class="medal-criteria">Supera la Batalla Final con ≥70%</div>
+          <span class="medal-status">🔒 Por ganar</span>
+        </div>
+      </div>
+
+      <div class="hall-of-fame" id="hall-of-fame">
+        <h2>✨ Hall de la Fama</h2>
+        <img class="hall-pikachu" src="./images/pikachu.jpeg" alt="Pikachu">
+        <p class="hall-text">
+          ¿Quién será el primer <strong style="color:var(--gold)">Maestro Pokémon del Saber</strong><br>
+          de la U.E. 25 de Junio?<br><br>
+          🏆 <em>¡El cupo está disponible para ti, Entrenador!</em> 🏆
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PÁGINA 6: CÓMO FUNCIONA ══ -->
+  <section class="page" id="como-funciona">
+    <div style="max-width:1000px;margin:0 auto;padding:60px 24px 80px">
+      <h1 class="section-title">📖 ¿Cómo funciona la Liga?</h1>
+
+      <div class="story-card">
+        <h2>📜 La Historia</h2>
+        <p>
+          En el Ecuador, los ecosistemas están cambiando. Los seres vivos que los habitan enfrentan amenazas que muy pocos conocen.
+          El Profesor Oak ha convocado a los mejores estudiantes de la <strong style="color:var(--gold)">U.E. 25 de Junio</strong>
+          para convertirse en <strong style="color:var(--gold)">Entrenadores Investigadores</strong>.
+          <br><br>
+          Tu misión es recorrer los <strong>4 Gimnasios del Conocimiento</strong>, superar sus desafíos de Ciencias Naturales
+          y ganar las <strong>4 Medallas del Saber</strong>. Solo entonces podrás desafiar la Batalla Final y proclamarte
+          <strong style="color:var(--gold)">Maestro Pokémon del Saber</strong>.
+          <br><br>
+          ¡El conocimiento es tu arma más poderosa, Entrenador!
+        </p>
+      </div>
+
+      <div class="timeline" id="timeline">
+        <div class="timeline-step" data-step="1">
+          <div class="step-circle">1</div>
+          <div class="timeline-step-icon">🔭</div>
+          <h3>Recibe la misión del Profesor Oak</h3>
+          <p>Lee el mensaje del Profesor Oak y comprende la importancia de proteger los ecosistemas del Ecuador.</p>
+        </div>
+        <div class="timeline-step" data-step="2">
+          <div class="step-circle">2</div>
+          <div class="timeline-step-icon">👥</div>
+          <h3>Forma tu equipo</h3>
+          <p>Únete a uno de los 5 equipos: Charmander, Squirtle, Bulbasaur, Pikachu o Caterpie.</p>
+        </div>
+        <div class="timeline-step" data-step="3">
+          <div class="step-circle">3</div>
+          <div class="timeline-step-icon">📚</div>
+          <h3>Completa los entrenamientos semanales</h3>
+          <p>Cada semana hay actividades en equipo e individuales. Cada entrega suma PokéCoins para tu equipo.</p>
+        </div>
+        <div class="timeline-step" data-step="4">
+          <div class="step-circle">4</div>
+          <div class="timeline-step-icon">⚔️</div>
+          <h3>Supera la batalla del gimnasio</h3>
+          <p>Enfrenta el desafío final de cada gimnasio. Necesitas mínimo 70% para ganarlo.</p>
+        </div>
+        <div class="timeline-step" data-step="5">
+          <div class="step-circle">5</div>
+          <div class="timeline-step-icon">🏅</div>
+          <h3>Gana la medalla digital</h3>
+          <p>Supera el gimnasio y el líder te otorgará la medalla de ese tipo. ¡Colecciona las 4!</p>
+        </div>
+        <div class="timeline-step" data-step="6">
+          <div class="step-circle">6</div>
+          <div class="timeline-step-icon">👑</div>
+          <h3>¡Conviértete en Maestro Pokémon del Saber!</h3>
+          <p>Con las 4 medallas y la mayor cantidad de PokéCoins, serás el primer Maestro de la Liga.</p>
+        </div>
+      </div>
+
+      <h2 class="rules-title">📋 Las Reglas</h2>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-icon">🟡</div>
+          <h3>PokéCoins</h3>
+          <p>Se ganan completando actividades individuales (+40), misiones en equipo (+80), medallas (+100) y récords (+20 bonus).</p>
+        </div>
+        <div class="rule-card">
+          <div class="rule-icon">📈</div>
+          <h3>Niveles</h3>
+          <p>Novato → Experto → Maestro → Gran Maestro. Cada nivel requiere más PokéCoins acumulados.</p>
+        </div>
+        <div class="rule-card">
+          <div class="rule-icon">🏅</div>
+          <h3>Medallas</h3>
+          <p>Se obtienen superando el desafío final de cada Gimnasio del Conocimiento con mínimo 70%.</p>
+        </div>
+        <div class="rule-card">
+          <div class="rule-icon">👥</div>
+          <h3>Equipos</h3>
+          <p>5 equipos: Charmander 🔥 · Squirtle 💧 · Bulbasaur 🌿 · Pikachu ⚡ · Caterpie 🐛</p>
+        </div>
+        <div class="rule-card">
+          <div class="rule-icon">⏰</div>
+          <h3>Horarios</h3>
+          <p>El ranking se actualiza cada viernes. Las medallas se registran al completar el desafío del gimnasio.</p>
+        </div>
+        <div class="rule-card">
+          <div class="rule-icon">📱</div>
+          <h3>Acceso</h3>
+          <p>Desde cualquier dispositivo con internet: celular, tablet o computadora. Sin instalar nada.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- #app -->
+
+<!-- ══ MODALES ══ -->
+<div class="modal-overlay" id="modal-roca">
+  <div class="modal-box">
+    <div class="modal-header">
+      <img src="./images/brock.jpeg" alt="Brock">
+      <h3>🪨 Gimnasio Roca — Características de los Seres Vivos</h3>
+      <button class="modal-close" onclick="closeModal('modal-roca')">✕</button>
+    </div>
+    <iframe class="modal-iframe" id="iframe-roca" src="" allowfullscreen></iframe>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-agua">
+  <div class="modal-box">
+    <div class="modal-header">
+      <img src="./images/misty.jpeg" alt="Misty">
+      <h3>💧 Gimnasio Agua — Clasificación de los Seres Vivos</h3>
+      <button class="modal-close" onclick="closeModal('modal-agua')">✕</button>
+    </div>
+    <iframe class="modal-iframe" id="iframe-agua" src="" allowfullscreen></iframe>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-planta">
+  <div class="modal-box">
+    <div class="modal-header">
+      <img src="./images/erika.jpeg" alt="Erika">
+      <h3>🌿 Gimnasio Planta — Adaptaciones al Medio</h3>
+      <button class="modal-close" onclick="closeModal('modal-planta')">✕</button>
+    </div>
+    <iframe class="modal-iframe" id="iframe-planta" src="" allowfullscreen></iframe>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-elec">
+  <div class="modal-box">
+    <div class="modal-header">
+      <img src="./images/surge.jpeg" alt="Lt. Surge">
+      <h3>⚡ Gimnasio Eléctrico — Ecosistemas del Ecuador</h3>
+      <button class="modal-close" onclick="closeModal('modal-elec')">✕</button>
+    </div>
+    <iframe class="modal-iframe" id="iframe-elec" src="" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- EASTER EGG -->
+<canvas id="easter-egg-canvas"></canvas>
+<div id="easter-msg">¡Pika pika! 🌩️</div>
+
+<!-- AUDIO -->
+<button id="audio-btn" onclick="toggleAudio()" title="Música">🔇</button>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img src="./images/pokemon-logo.jpeg" alt="Logo">
+        <span>Liga del Saber</span>
+      </div>
+      <p>Creado por: Lcdo. Leonel Alexander Briones Rojas<br>U.E. 25 de Junio · Machala, Ecuador · 2026</p>
+    </div>
+    <div class="footer-links">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a onclick="navigate('inicio')">🏠 Inicio</a></li>
+        <li><a onclick="navigate('mision')">🔭 La Misión</a></li>
+        <li><a onclick="navigate('gimnasios')">⚔️ Gimnasios</a></li>
+        <li><a onclick="navigate('ranking')">🏆 Ranking</a></li>
+        <li><a onclick="navigate('medallas')">🏅 Medallas</a></li>
+        <li><a onclick="navigate('como-funciona')">📖 Cómo Funciona</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Gimnasios</h4>
+      <ul>
+        <li><a onclick="openModal('modal-roca')">🪨 Gimnasio Roca</a></li>
+        <li><a onclick="openModal('modal-agua')">💧 Gimnasio Agua</a></li>
+        <li><a onclick="openModal('modal-planta')">🌿 Gimnasio Planta</a></li>
+        <li><a onclick="openModal('modal-elec')">⚡ Gimnasio Eléctrico</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-powered">⚡ Powered by la Liga Pokémon del Saber</div>
+    <p class="footer-copy">© 2026 U.E. 25 de Junio · Machala, Ecuador</p>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════
+   POKÉBALL CANVAS BACKGROUND
+══════════════════════════════════════ */
+(function () {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  const TOTAL = 25;
+  const balls = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function mkBall(scattered) {
+    return {
+      x: Math.random() * W,
+      y: scattered ? Math.random() * H : H + Math.random() * 150,
+      r: 15 + Math.random() * 25,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: -(0.3 + Math.random() * 0.9),
+      angle: Math.random() * Math.PI * 2,
+      vr: (Math.random() - 0.5) * 0.018,
+      alpha: 0.15 + Math.random() * 0.2
+    };
+  }
+  for (let i = 0; i < TOTAL; i++) balls.push(mkBall(true));
+
+  function drawBall(b) {
+    ctx.save();
+    ctx.globalAlpha = b.alpha;
+    ctx.translate(b.x, b.y);
+    ctx.rotate(b.angle);
+    const r = b.r;
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = '#CC0000'; ctx.fillRect(-r, -r, r * 2, r);
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(-r, 0,  r * 2, r);
+    ctx.fillStyle = '#111111'; ctx.fillRect(-r, -r * 0.07, r * 2, r * 0.14);
+    ctx.beginPath(); ctx.arc(0, 0, r * 0.28, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff'; ctx.fill();
+    ctx.strokeStyle = '#111'; ctx.lineWidth = r * 0.1; ctx.stroke();
+    ctx.restore();
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    for (const b of balls) {
+      b.x += b.vx; b.y += b.vy; b.angle += b.vr;
+      if (b.y < -b.r * 2) Object.assign(b, mkBall(false));
+      drawBall(b);
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ══════════════════════════════════════
+   ROUTER — SPA
+══════════════════════════════════════ */
+let currentPage = 'inicio';
+
+const MODAL_SRCS = {
+  'modal-roca'  : 'https://view.genially.com/6a34ef1fd4786b2e6baa5ffa',
+  'modal-agua'  : 'https://edpuzzle.com/media/6a34f5cc37cfdc0463cfe9b5',
+  'modal-planta': 'https://app.nearpod.com/?pin=QG62W',
+  'modal-elec'  : 'https://iamlealbro.github.io/liga-pokemon-del-saber/batalla-final.html'
+};
+
+function navigate(pageId) {
+  if (pageId === currentPage) { closeMobile(); return; }
+  const oldEl = document.getElementById(currentPage);
+  const newEl = document.getElementById(pageId);
+  if (!newEl) return;
+
+  oldEl.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+  oldEl.style.opacity = '0';
+  oldEl.style.transform = 'translateX(-24px)';
+
+  setTimeout(() => {
+    oldEl.classList.remove('active');
+    oldEl.style.cssText = '';
+    newEl.classList.add('active');
+    newEl.style.cssText = 'opacity:0;transform:translateX(24px);transition:none';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        newEl.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        newEl.style.opacity = '1';
+        newEl.style.transform = 'translateX(0)';
+        setTimeout(() => { newEl.style.cssText = ''; }, 420);
+      });
+    });
+    currentPage = pageId;
+    updateNav(pageId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    onEnter(pageId);
+  }, 220);
+}
+
+function updateNav(id) {
+  document.querySelectorAll('[data-page]').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === id);
+  });
+}
+
+function onEnter(id) {
+  if (id === 'mision')        startTypewriter();
+  if (id === 'como-funciona') animateTimeline();
+  if (id === 'medallas')      spawnGoldenParticles();
+}
+
+/* ══════════════════════════════════════
+   MOBILE MENU
+══════════════════════════════════════ */
+function toggleMobile() {
+  const m = document.getElementById('mobile-menu');
+  const h = document.getElementById('hamburger');
+  const open = m.classList.toggle('open');
+  h.classList.toggle('open', open);
+}
+function closeMobile() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+/* ══════════════════════════════════════
+   MODALES — lazy iframe src
+══════════════════════════════════════ */
+function openModal(id) {
+  const overlay = document.getElementById(id);
+  // Lazy-load the iframe
+  const iframeId = id.replace('modal-', 'iframe-');
+  const iframe = document.getElementById(iframeId);
+  if (iframe && !iframe.src && MODAL_SRCS[id]) {
+    iframe.src = MODAL_SRCS[id];
+  }
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    document.body.style.overflow = '';
+  }
+});
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) { m.classList.remove('open'); document.body.style.overflow = ''; } });
+});
+
+/* ══════════════════════════════════════
+   TYPEWRITER
+══════════════════════════════════════ */
+const OAK_MSG = `Entrenadores... los ecosistemas del Ecuador están en peligro. Los seres vivos están desapareciendo. Los reinos de la naturaleza se desequilibran.\n\nHe seleccionado a un grupo especial de ENTRENADORES INVESTIGADORES para una misión crítica.\n\nRecorred los 4 Gimnasios del Conocimiento. ¡La Liga Pokémon del Saber os necesita!`;
+let twIdx = 0, twTimer = null, twDone = false;
+
+function startTypewriter() {
+  if (twDone) return;
+  const el  = document.getElementById('typewriter-text');
+  const cur = document.getElementById('tw-cursor');
+  el.textContent = '';
+  twIdx = 0;
+  clearTimeout(twTimer);
+  function type() {
+    if (twIdx < OAK_MSG.length) {
+      const ch = OAK_MSG[twIdx++];
+      el.textContent += ch === '\n' ? '\n' : ch;
+      el.style.whiteSpace = 'pre-wrap';
+      twTimer = setTimeout(type, ch === '.' || ch === '!' ? 80 : 30);
+    } else {
+      twDone = true;
+      cur.style.display = 'none';
+    }
+  }
+  type();
+}
+
+/* ══════════════════════════════════════
+   TIMELINE ANIMATION
+══════════════════════════════════════ */
+function animateTimeline() {
+  document.querySelectorAll('.timeline-step').forEach((s, i) => {
+    s.classList.remove('visible');
+    setTimeout(() => s.classList.add('visible'), 180 * i);
+  });
+}
+
+/* ══════════════════════════════════════
+   GOLDEN PARTICLES (Hall of Fame)
+══════════════════════════════════════ */
+function spawnGoldenParticles() {
+  const hall = document.getElementById('hall-of-fame');
+  hall.querySelectorAll('.gp').forEach(p => p.remove());
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'gp';
+    p.style.setProperty('--x', Math.random() * 100 + '%');
+    p.style.setProperty('--dur', (3 + Math.random() * 4) + 's');
+    p.style.animationDelay = (Math.random() * 5) + 's';
+    p.style.width = p.style.height = (3 + Math.random() * 4) + 'px';
+    hall.appendChild(p);
+  }
+}
+
+/* ══════════════════════════════════════
+   CUSTOM CURSOR
+══════════════════════════════════════ */
+const cursorEl  = document.getElementById('cursor');
+const trailWrap = document.getElementById('cursor-trail');
+
+document.addEventListener('mousemove', e => {
+  cursorEl.style.left = e.clientX + 'px';
+  cursorEl.style.top  = e.clientY + 'px';
+  const dot = document.createElement('div');
+  dot.className = 'trail-dot';
+  dot.style.left = e.clientX + 'px';
+  dot.style.top  = e.clientY + 'px';
+  trailWrap.appendChild(dot);
+  setTimeout(() => dot.remove(), 500);
+});
+
+/* ══════════════════════════════════════
+   WEB AUDIO — PROCEDURAL MELODY
+══════════════════════════════════════ */
+let audioCtx = null, audioOn = false, melodyTimer = null;
+const SCALE = [523,587,659,784,659,587,523,494,440,523,587,659,523,440,392,440,494,523,659,784,880,784,659,523];
+let noteI = 0;
+
+function playNote(freq, t) {
+  const osc  = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.type = 'square';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.055, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+  osc.start(t); osc.stop(t + 0.24);
+}
+
+function startMelody() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  melodyTimer = setInterval(() => {
+    playNote(SCALE[noteI % SCALE.length], audioCtx.currentTime);
+    noteI++;
+  }, 280);
+}
+function stopMelody() { clearInterval(melodyTimer); }
+
+function toggleAudio() {
+  audioOn = !audioOn;
+  document.getElementById('audio-btn').textContent = audioOn ? '🔊' : '🔇';
+  audioOn ? startMelody() : stopMelody();
+}
+
+/* ══════════════════════════════════════
+   EASTER EGG — type "PIKACHU"
+══════════════════════════════════════ */
+const TARGET = 'PIKACHU';
+let typed = '';
+
+document.addEventListener('keydown', e => {
+  typed = (typed + e.key.toUpperCase()).slice(-TARGET.length);
+  if (typed === TARGET) { typed = ''; triggerEasterEgg(); }
+});
+
+function triggerEasterEgg() {
+  const canvas = document.getElementById('easter-egg-canvas');
+  const msg    = document.getElementById('easter-msg');
+  canvas.classList.add('active');
+  msg.classList.add('active');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+
+  const balls = Array.from({ length: 60 }, () => ({
+    x: Math.random() * canvas.width,
+    y: -50,
+    r: 10 + Math.random() * 22,
+    vy: 4 + Math.random() * 5,
+    vx: (Math.random() - 0.5) * 2,
+    angle: Math.random() * Math.PI * 2,
+    vr: (Math.random() - 0.5) * 0.1
+  }));
+
+  const end = Date.now() + 3000;
+  function rain() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const b of balls) {
+      b.x += b.vx; b.y += b.vy; b.angle += b.vr;
+      if (b.y > canvas.height + 40) { b.y = -40; b.x = Math.random() * canvas.width; }
+      ctx.save();
+      ctx.globalAlpha = 0.88;
+      ctx.translate(b.x, b.y); ctx.rotate(b.angle);
+      const r = b.r;
+      ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.clip();
+      ctx.fillStyle='#CC0000'; ctx.fillRect(-r,-r,r*2,r);
+      ctx.fillStyle='#fff';    ctx.fillRect(-r,0,r*2,r);
+      ctx.fillStyle='#111';    ctx.fillRect(-r,-r*.07,r*2,r*.14);
+      ctx.beginPath(); ctx.arc(0,0,r*.28,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#111'; ctx.lineWidth=r*.1; ctx.stroke();
+      ctx.restore();
+    }
+    if (Date.now() < end) { requestAnimationFrame(rain); }
+    else {
+      canvas.classList.remove('active');
+      msg.classList.remove('active');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  rain();
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+updateNav('inicio');
+</script>
+</body>
+</html>
