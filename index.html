@@ -86,7 +86,6 @@ body {
 }
 .nav-logo img {
   height: 40px;
-  mix-blend-mode: multiply;
   border-radius: 4px;
 }
 .nav-logo-text {
@@ -211,7 +210,6 @@ body {
 .hero-logo {
   width: 300px;
   max-width: 100%;
-  mix-blend-mode: screen;
   filter: drop-shadow(0 0 30px rgba(255,215,0,0.4));
   animation: logoFloat 4s ease-in-out infinite;
   margin-bottom: 20px;
@@ -1118,7 +1116,7 @@ footer {
 .footer-brand .footer-logo {
   display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
 }
-.footer-brand .footer-logo img { height: 34px; mix-blend-mode: multiply; }
+.footer-brand .footer-logo img { height: 34px; }
 .footer-brand .footer-logo span {
   font-family: 'Press Start 2P', monospace;
   font-size: 8px; color: var(--gold);
@@ -1189,7 +1187,7 @@ footer {
 <!-- NAVBAR -->
 <nav id="navbar">
   <div class="nav-logo" onclick="navigate('inicio')">
-    <img src="./images/pokemon-logo.jpeg" alt="Pokémon Logo">
+    <img src="./images/pokemon-logo.png" alt="Pokémon Logo">
     <div class="nav-logo-text">Liga del<br>Saber</div>
   </div>
   <ul class="nav-links">
@@ -1222,7 +1220,7 @@ footer {
   <section class="page active" id="inicio">
     <div class="hero">
       <div class="hero-left">
-        <img class="hero-logo" src="./images/pokemon-logo.jpeg" alt="Logo Pokémon">
+        <img class="hero-logo" src="./images/pokemon-logo.png" alt="Logo Pokémon">
         <h1 class="hero-title">LIGA POKÉMON<br>DEL SABER</h1>
         <p class="hero-subtitle">U.E. 25 de Junio · 6to B · Machala, Ecuador</p>
         <div class="hero-badge">🎓 Ciencias Naturales · 2026</div>
@@ -1230,7 +1228,7 @@ footer {
         <button class="btn-cta" onclick="navigate('mision')">¡COMENZAR AVENTURA! →</button>
       </div>
       <div class="hero-right">
-        <img src="./images/oak-starters.jpeg" alt="Profesor Oak y Starters">
+        <img src="./images/oak-starters.png" alt="Profesor Oak y Starters">
       </div>
     </div>
     <div class="stats-section">
@@ -1260,7 +1258,7 @@ footer {
 
       <div class="oak-section">
         <div class="oak-img-wrap">
-          <img src="./images/oak.jpeg" alt="Profesor Oak">
+          <img src="./images/oak.png" alt="Profesor Oak">
         </div>
         <div class="oak-dialog-wrap">
           <h2>Un mensaje del Profesor Oak</h2>
@@ -1284,7 +1282,7 @@ footer {
       <div class="map-section">
         <h2>Tu ruta hacia el conocimiento</h2>
         <div class="map-container">
-          <img src="./images/Kanto.jpeg" alt="Mapa Kanto">
+          <img src="./images/Kanto.png" alt="Mapa Kanto">
           <div class="map-pin" data-label="GIM. ROCA" style="top:28%;left:20%"></div>
           <div class="map-pin" data-label="GIM. AGUA" style="top:46%;left:55%;background:#0277bd"></div>
           <div class="map-pin" data-label="GIM. PLANTA" style="top:66%;left:36%;background:#2e7d32"></div>
@@ -1303,7 +1301,7 @@ footer {
         <!-- ROCA -->
         <div class="gym-card" onclick="window.open('https://view.genially.com/6a34ef1fd4786b2e6baa5ffa','_blank')">
           <div class="gym-card-header" style="background:linear-gradient(135deg,#8a6e4b,#5d4037)">
-            <img class="gym-leader-img" src="./images/brock.jpeg" alt="Brock">
+            <img class="gym-leader-img" src="./images/brock.png" alt="Brock">
             <div class="gym-header-info">
               <div class="gym-badge" style="background:rgba(0,0,0,0.3)">🪨 Tipo Roca</div>
               <h3>Brock</h3>
@@ -1317,7 +1315,7 @@ footer {
               <li>Relación con el entorno</li>
               <li>Reproducción y ciclo de vida</li>
             </ul>
-            <img class="gym-pokemon-img" src="./images/sandshrew.jpeg" alt="Sandshrew">
+            <img class="gym-pokemon-img" src="./images/sandshrew.png" alt="Sandshrew">
             <button class="btn-gym" onclick="event.stopPropagation();window.open('https://view.genially.com/6a34ef1fd4786b2e6baa5ffa','_blank')">⚔️ ENTRAR AL GIMNASIO</button>
           </div>
         </div>
@@ -1325,7 +1323,7 @@ footer {
         <!-- AGUA -->
         <div class="gym-card" onclick="window.open('https://edpuzzle.com/media/6a34f5cc37cfdc0463cfe9b5','_blank')">
           <div class="gym-card-header" style="background:linear-gradient(135deg,#0277bd,#01579b)">
-            <img class="gym-leader-img" src="./images/misty.jpeg" alt="Misty">
+            <img class="gym-leader-img" src="./images/misty.png" alt="Misty">
             <div class="gym-header-info">
               <div class="gym-badge" style="background:rgba(0,0,0,0.3)">💧 Tipo Agua</div>
               <h3>Misty</h3>
@@ -1339,7 +1337,7 @@ footer {
               <li>Reino Animalia y Plantae</li>
               <li>Hongos, Protistas, Moneras</li>
             </ul>
-            <img class="gym-pokemon-img" src="./images/gyarados.jpeg" alt="Gyarados">
+            <img class="gym-pokemon-img" src="./images/gyarados.png" alt="Gyarados">
             <button class="btn-gym" onclick="event.stopPropagation();window.open('https://edpuzzle.com/media/6a34f5cc37cfdc0463cfe9b5','_blank')">⚔️ ENTRAR AL GIMNASIO</button>
           </div>
         </div>
@@ -1347,7 +1345,7 @@ footer {
         <!-- PLANTA -->
         <div class="gym-card" onclick="window.open('https://app.nearpod.com/?pin=QG62W','_blank')">
           <div class="gym-card-header" style="background:linear-gradient(135deg,#2e7d32,#1b5e20)">
-            <img class="gym-leader-img" src="./images/erika.jpeg" alt="Erika">
+            <img class="gym-leader-img" src="./images/erika.png" alt="Erika">
             <div class="gym-header-info">
               <div class="gym-badge" style="background:rgba(0,0,0,0.3)">🌿 Tipo Planta</div>
               <h3>Erika</h3>
@@ -1361,7 +1359,7 @@ footer {
               <li>Adaptación fisiológica</li>
               <li>Adaptación conductual</li>
             </ul>
-            <img class="gym-pokemon-img" src="./images/caterpie.jpeg" alt="Caterpie">
+            <img class="gym-pokemon-img" src="./images/caterpie.png" alt="Caterpie">
             <button class="btn-gym" onclick="event.stopPropagation();window.open('https://app.nearpod.com/?pin=QG62W','_blank')">⚔️ ENTRAR AL GIMNASIO</button>
           </div>
         </div>
@@ -1369,7 +1367,7 @@ footer {
         <!-- ELÉCTRICO -->
         <div class="gym-card" onclick="window.open('https://iamlealbro.github.io/liga-pokemon-del-saber/batalla-final.html','_blank')">
           <div class="gym-card-header" style="background:linear-gradient(135deg,#f57f17,#e65100)">
-            <img class="gym-leader-img" src="./images/surge.jpeg" alt="Lt. Surge">
+            <img class="gym-leader-img" src="./images/surge.png" alt="Lt. Surge">
             <div class="gym-header-info">
               <div class="gym-badge" style="background:rgba(0,0,0,0.3)">⚡ Tipo Eléctrico</div>
               <h3>Lt. Surge</h3>
@@ -1383,7 +1381,7 @@ footer {
               <li>Sierra: páramo andino</li>
               <li>Amazonía y Galápagos</li>
             </ul>
-            <img class="gym-pokemon-img" src="./images/zapdos.jpeg" alt="Zapdos">
+            <img class="gym-pokemon-img" src="./images/zapdos.png" alt="Zapdos">
             <button class="btn-gym" onclick="event.stopPropagation();window.open('https://iamlealbro.github.io/liga-pokemon-del-saber/batalla-final.html','_blank')">⚔️ ENTRAR AL GIMNASIO</button>
           </div>
         </div>
@@ -1400,7 +1398,7 @@ footer {
       <div class="ranking-table">
         <div class="rank-row" style="border-color:rgba(204,50,50,0.35)">
           <div class="rank-pos gold">🥇</div>
-          <img class="rank-pokemon" src="./images/charmander.jpeg" alt="Charmander">
+          <img class="rank-pokemon" src="./images/charmander.png" alt="Charmander">
           <div class="rank-info">
             <div class="rank-name" style="color:#ff7b7b">🔥 Team Charmander</div>
             <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#ff7b7b,#cc0000)"></div></div>
@@ -1411,7 +1409,7 @@ footer {
         </div>
         <div class="rank-row" style="border-color:rgba(50,100,204,0.35)">
           <div class="rank-pos silver">🥈</div>
-          <img class="rank-pokemon" src="./images/squirtle.jpeg" alt="Squirtle">
+          <img class="rank-pokemon" src="./images/squirtle.png" alt="Squirtle">
           <div class="rank-info">
             <div class="rank-name" style="color:#6dc8ff">💧 Team Squirtle</div>
             <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#6dc8ff,#0277bd)"></div></div>
@@ -1422,7 +1420,7 @@ footer {
         </div>
         <div class="rank-row" style="border-color:rgba(50,150,50,0.35)">
           <div class="rank-pos bronze">🥉</div>
-          <img class="rank-pokemon" src="./images/bulbasaur.jpeg" alt="Bulbasaur">
+          <img class="rank-pokemon" src="./images/bulbasaur.png" alt="Bulbasaur">
           <div class="rank-info">
             <div class="rank-name" style="color:#7eff96">🌿 Team Bulbasaur</div>
             <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#7eff96,#2e7d32)"></div></div>
@@ -1433,7 +1431,7 @@ footer {
         </div>
         <div class="rank-row" style="border-color:rgba(255,215,0,0.3)">
           <div class="rank-pos other">4°</div>
-          <img class="rank-pokemon" src="./images/pikachu.jpeg" alt="Pikachu">
+          <img class="rank-pokemon" src="./images/pikachu.png" alt="Pikachu">
           <div class="rank-info">
             <div class="rank-name" style="color:#FFD700">⚡ Team Pikachu</div>
             <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#FFD700,#f57f17)"></div></div>
@@ -1444,7 +1442,7 @@ footer {
         </div>
         <div class="rank-row" style="border-color:rgba(100,180,50,0.3)">
           <div class="rank-pos other">5°</div>
-          <img class="rank-pokemon" src="./images/caterpie.jpeg" alt="Caterpie">
+          <img class="rank-pokemon" src="./images/caterpie.png" alt="Caterpie">
           <div class="rank-info">
             <div class="rank-name" style="color:#b8e994">🐛 Team Caterpie</div>
             <div class="rank-bar-wrap"><div class="rank-bar" style="background:linear-gradient(90deg,#b8e994,#1b5e20)"></div></div>
@@ -1527,7 +1525,7 @@ footer {
 
       <div class="hall-of-fame" id="hall-of-fame">
         <h2>✨ Hall de la Fama</h2>
-        <img class="hall-pikachu" src="./images/pikachu.jpeg" alt="Pikachu">
+        <img class="hall-pikachu" src="./images/pikachu.png" alt="Pikachu">
         <p class="hall-text">
           ¿Quién será el primer <strong style="color:var(--gold)">Maestro Pokémon del Saber</strong><br>
           de la U.E. 25 de Junio?<br><br>
@@ -1638,7 +1636,7 @@ footer {
 <div class="modal-overlay" id="modal-roca">
   <div class="modal-box">
     <div class="modal-header">
-      <img src="./images/brock.jpeg" alt="Brock">
+      <img src="./images/brock.png" alt="Brock">
       <h3>🪨 Gimnasio Roca — Características de los Seres Vivos</h3>
       <button class="modal-close" onclick="closeModal('modal-roca')">✕</button>
     </div>
@@ -1649,7 +1647,7 @@ footer {
 <div class="modal-overlay" id="modal-agua">
   <div class="modal-box">
     <div class="modal-header">
-      <img src="./images/misty.jpeg" alt="Misty">
+      <img src="./images/misty.png" alt="Misty">
       <h3>💧 Gimnasio Agua — Clasificación de los Seres Vivos</h3>
       <button class="modal-close" onclick="closeModal('modal-agua')">✕</button>
     </div>
@@ -1660,7 +1658,7 @@ footer {
 <div class="modal-overlay" id="modal-planta">
   <div class="modal-box">
     <div class="modal-header">
-      <img src="./images/erika.jpeg" alt="Erika">
+      <img src="./images/erika.png" alt="Erika">
       <h3>🌿 Gimnasio Planta — Adaptaciones al Medio</h3>
       <button class="modal-close" onclick="closeModal('modal-planta')">✕</button>
     </div>
@@ -1671,7 +1669,7 @@ footer {
 <div class="modal-overlay" id="modal-elec">
   <div class="modal-box">
     <div class="modal-header">
-      <img src="./images/surge.jpeg" alt="Lt. Surge">
+      <img src="./images/surge.png" alt="Lt. Surge">
       <h3>⚡ Gimnasio Eléctrico — Ecosistemas del Ecuador</h3>
       <button class="modal-close" onclick="closeModal('modal-elec')">✕</button>
     </div>
@@ -1691,7 +1689,7 @@ footer {
   <div class="footer-inner">
     <div class="footer-brand">
       <div class="footer-logo">
-        <img src="./images/pokemon-logo.jpeg" alt="Logo">
+        <img src="./images/pokemon-logo.png" alt="Logo">
         <span>Liga del Saber</span>
       </div>
       <p>Creado por: Lcdo. Leonel Alexander Briones Rojas<br>U.E. 25 de Junio · Machala, Ecuador · 2026</p>
@@ -2046,51 +2044,6 @@ function triggerEasterEgg() {
    INIT
 ══════════════════════════════════════ */
 updateNav('inicio');
-</script>
-
-<script>
-function removeWhiteBg(img, tolerance = 50) {
-  try {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = img.naturalWidth || img.width;
-    canvas.height = img.naturalHeight || img.height;
-    ctx.drawImage(img, 0, 0);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i], g = data[i+1], b = data[i+2];
-      if (r > 255-tolerance && g > 255-tolerance && b > 255-tolerance) {
-        data[i+3] = 0;
-      }
-    }
-    ctx.putImageData(imageData, 0, 0);
-    img.src = canvas.toDataURL('image/png');
-  } catch(e) {
-    console.log('No se pudo procesar imagen:', img.src);
-  }
-}
-
-window.addEventListener('load', () => {
-  const characterSelectors = [
-    'brock','misty','erika','surge','oak',
-    'pikachu','charmander','squirtle','bulbasaur',
-    'caterpie','zapdos','gyarados','sandshrew'
-  ];
-  document.querySelectorAll('img').forEach(img => {
-    const src = img.src.toLowerCase();
-    const isCharacter = characterSelectors.some(name => src.includes(name));
-    if (isCharacter) {
-      img.crossOrigin = 'anonymous';
-      if (img.complete && img.naturalWidth > 0) {
-        removeWhiteBg(img);
-      } else {
-        img.addEventListener('load', () => removeWhiteBg(img));
-        img.src = img.src;
-      }
-    }
-  });
-});
 </script>
 </body>
 </html>
