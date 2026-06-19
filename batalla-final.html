@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batalla Final - Liga Pokémon del Saber</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a1a;
+    color: #fff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 3s infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.2; }
+    100% { opacity: 1; }
+  }
+
+  #game-container {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+
+  /* ===== HEADER ===== */
+  #header {
+    text-align: center;
+    padding: 18px 0 10px;
+  }
+
+  #header h1 {
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    font-weight: 900;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(255,215,0,0.4);
+  }
+
+  #header p {
+    font-size: clamp(0.75rem, 2.5vw, 0.95rem);
+    color: #aaa;
+    margin-top: 4px;
+  }
+
+  /* ===== BATTLEFIELD ===== */
+  #battlefield {
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    border: 2px solid #FFD700;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 16px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #battlefield::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: #FFD700;
+    opacity: 0.3;
+  }
+
+  .battle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ===== TRAINER CARDS ===== */
+  .trainer-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    min-width: 160px;
+    flex: 1;
+  }
+
+  .trainer-card.enemy { border-color: rgba(255,80,80,0.4); }
+
+  .trainer-name {
+    font-size: clamp(0.7rem, 2vw, 0.85rem);
+    font-weight: 700;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .trainer-card.enemy .trainer-name { color: #ff6b6b; }
+
+  .hp-label {
+    font-size: 0.65rem;
+    color: #aaa;
+    margin-bottom: 4px;
+  }
+
+  .hp-bar-bg {
+    background: #333;
+    border-radius: 99px;
+    height: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .hp-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+  }
+
+  .hp-bar-fill.enemy-hp { background: linear-gradient(90deg, #ff4444, #ff8c00); }
+  .hp-bar-fill.player-hp { background: linear-gradient(90deg, #00c853, #69f0ae); }
+
+  .hp-text {
+    font-size: 0.75rem;
+    color: #ccc;
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* ===== POKEMON SPRITES (CSS art) ===== */
+  .sprite-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    padding: 0 10px;
+  }
+
+  .pokemon-sprite {
+    font-size: clamp(3rem, 10vw, 5rem);
+    line-height: 1;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  }
+
+  .pokemon-sprite.enemy-sprite { animation-delay: -1.5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+
+  @keyframes hit-flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .sprite-shake { animation: shake 0.4s ease !important; }
+  .sprite-hit { animation: hit-flash 0.4s ease !important; }
+
+  /* ===== POKÉCOINS ===== */
+  #coins-display {
+    text-align: center;
+    padding: 10px 0 4px;
+  }
+
+  #coins-display .coin-label {
+    font-size: 0.75rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  #coins-display .coin-value {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 900;
+    color: #FFD700;
+  }
+
+  /* ===== QUESTION PANEL ===== */
+  #question-panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,215,0,0.25);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 14px 0;
+  }
+
+  #q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #q-number {
+    background: #FFD700;
+    color: #1a1a2e;
+    font-weight: 900;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  #timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #timer-bar-bg {
+    background: #333;
+    border-radius: 99px;
+    height: 10px;
+    width: 120px;
+    overflow: hidden;
+  }
+
+  #timer-bar {
+    height: 100%;
+    border-radius: 99px;
+    background: #00e676;
+    transition: width 1s linear, background 1s linear;
+  }
+
+  #timer-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #FFD700;
+    min-width: 24px;
+    text-align: right;
+  }
+
+  #question-text {
+    font-size: clamp(0.95rem, 2.8vw, 1.15rem);
+    font-weight: 700;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  /* ===== OPTIONS GRID ===== */
+  #options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    #options-grid { grid-template-columns: 1fr; }
+  }
+
+  .option-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,215,0,0.3);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #fff;
+    font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.4;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: rgba(255,215,0,0.12);
+    border-color: #FFD700;
+    transform: translateY(-2px);
+  }
+
+  .option-btn:active:not(:disabled) { transform: scale(0.98); }
+
+  .option-btn .opt-letter {
+    background: rgba(255,215,0,0.2);
+    color: #FFD700;
+    font-weight: 900;
+    font-size: 0.8rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .option-btn.correct {
+    background: rgba(0,200,83,0.2);
+    border-color: #00c853;
+  }
+
+  .option-btn.incorrect {
+    background: rgba(255,68,68,0.2);
+    border-color: #ff4444;
+  }
+
+  .option-btn.reveal-correct {
+    background: rgba(0,200,83,0.15);
+    border-color: #00c853;
+    animation: pulse-green 0.5s ease;
+  }
+
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,200,83,0); }
+    50% { box-shadow: 0 0 0 8px rgba(0,200,83,0.2); }
+  }
+
+  /* ===== FEEDBACK ===== */
+  #feedback-msg {
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    font-weight: 700;
+    margin-top: 14px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  #feedback-msg.correct { background: rgba(0,200,83,0.2); color: #00e676; border: 1px solid #00c853; }
+  #feedback-msg.incorrect { background: rgba(255,68,68,0.2); color: #ff6b6b; border: 1px solid #ff4444; }
+  #feedback-msg.timeout { background: rgba(255,152,0,0.2); color: #ffcc02; border: 1px solid #ff9800; }
+
+  /* ===== NEXT BUTTON ===== */
+  #next-btn {
+    display: none;
+    margin: 16px auto 0;
+    background: #FFD700;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 99px;
+    padding: 12px 32px;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(255,215,0,0.3);
+  }
+
+  #next-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(255,215,0,0.5); }
+
+  /* ===== PROGRESS ===== */
+  #progress-bar-bg {
+    background: #222;
+    border-radius: 99px;
+    height: 6px;
+    margin: 8px 0 16px;
+    overflow: hidden;
+  }
+
+  #progress-bar {
+    height: 100%;
+    border-radius: 99px;
+    background: #FFD700;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen {
+    display: none;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .screen.active { display: block; }
+
+  /* INTRO SCREEN */
+  #intro-screen {
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #FFD700;
+    border-radius: 20px;
+    padding: 36px 24px;
+    margin: 20px 0;
+  }
+
+  .intro-pokemon { font-size: clamp(3.5rem, 12vw, 6rem); margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+
+  .intro-title {
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
+    font-weight: 900;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .intro-sub {
+    font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+    color: #ccc;
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .intro-rules {
+    background: rgba(255,215,0,0.08);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .intro-rules li {
+    font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+    color: #ccc;
+    padding: 4px 0;
+    list-style: none;
+    padding-left: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .intro-rules li:last-child { border-bottom: none; }
+  .intro-rules li span { color: #FFD700; font-weight: 700; }
+
+  .start-btn {
+    background: #FFD700;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 99px;
+    padding: 16px 48px;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.4);
+    margin-top: 10px;
+  }
+
+  .start-btn:hover { transform: scale(1.05); box-shadow: 0 8px 30px rgba(255,215,0,0.6); }
+
+  /* FINAL SCREEN */
+  #final-screen {
+    background: linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%);
+    border: 2px solid #FFD700;
+    border-radius: 20px;
+    padding: 36px 24px;
+    margin: 20px 0;
+  }
+
+  .final-trophy { font-size: clamp(4rem, 14vw, 7rem); margin-bottom: 10px; animation: float 2s ease-in-out infinite; }
+
+  /* MEDAL DISPLAY */
+  #medal-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+    animation: medalReveal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  @keyframes medalReveal {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    60% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  #medal-img {
+    width: clamp(120px, 35vw, 180px);
+    height: clamp(120px, 35vw, 180px);
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(255,215,0,0.8)) drop-shadow(0 0 40px rgba(255,165,0,0.5));
+    animation: medalGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes medalGlow {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(255,215,0,0.8)) drop-shadow(0 0 40px rgba(255,165,0,0.5)); }
+    50% { filter: drop-shadow(0 0 35px rgba(255,215,0,1)) drop-shadow(0 0 60px rgba(255,165,0,0.8)); }
+  }
+
+  /* CSS fallback medal (Thunder Badge style) */
+  .css-medal {
+    width: clamp(120px, 35vw, 180px);
+    height: clamp(120px, 35vw, 180px);
+    background: radial-gradient(circle at 35% 35%, #fff7aa, #FFD700 40%, #FF8C00 70%, #cc6600);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(3rem, 10vw, 5rem);
+    box-shadow: 0 0 30px rgba(255,215,0,0.9), 0 0 60px rgba(255,165,0,0.6), inset 0 -4px 8px rgba(0,0,0,0.3);
+    border: 4px solid #FFD700;
+    animation: medalGlow 2s ease-in-out infinite;
+  }
+
+  .medal-label {
+    margin-top: 12px;
+    font-size: clamp(0.9rem, 3vw, 1.2rem);
+    font-weight: 900;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255,215,0,0.5);
+  }
+
+  .medal-subtitle {
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-top: 4px;
+  }
+
+  .final-title {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    font-weight: 900;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+
+  .final-sub {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    color: #ccc;
+    margin-bottom: 20px;
+  }
+
+  .final-score-box {
+    background: rgba(255,215,0,0.1);
+    border: 2px solid #FFD700;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 16px 0;
+    display: inline-block;
+    min-width: 240px;
+  }
+
+  .final-score-num {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 900;
+    color: #FFD700;
+    line-height: 1;
+  }
+
+  .final-score-label {
+    font-size: 0.8rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .final-level {
+    font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+    font-weight: 900;
+    color: #fff;
+    margin: 16px 0 8px;
+    padding: 10px 24px;
+    border-radius: 99px;
+    display: inline-block;
+  }
+
+  .level-novato { background: rgba(100,100,100,0.3); color: #ccc; border: 1px solid #888; }
+  .level-experto { background: rgba(0,120,200,0.3); color: #64b5f6; border: 1px solid #1e88e5; }
+  .level-maestro { background: rgba(150,0,200,0.3); color: #ce93d8; border: 1px solid #ab47bc; }
+  .level-gran-maestro { background: rgba(255,215,0,0.2); color: #FFD700; border: 2px solid #FFD700; animation: glow-gold 2s ease-in-out infinite; }
+
+  @keyframes glow-gold {
+    0%, 100% { box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    50% { box-shadow: 0 0 30px rgba(255,215,0,0.8); }
+  }
+
+  .replay-btn {
+    background: transparent;
+    color: #FFD700;
+    border: 2px solid #FFD700;
+    border-radius: 99px;
+    padding: 12px 36px;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.2s ease;
+    margin-top: 20px;
+  }
+
+  .replay-btn:hover { background: #FFD700; color: #1a1a2e; transform: scale(1.05); }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .stat-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .stat-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #FFD700;
+  }
+
+  .stat-lbl {
+    font-size: 0.7rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ===== ATTACK FLASH ===== */
+  #attack-flash {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    border-radius: 0;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+
+  #attack-flash.flash-correct { background: rgba(0,200,83,0.15); }
+  #attack-flash.flash-incorrect { background: rgba(255,68,68,0.15); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 520px) {
+    .battle-row { flex-direction: column; }
+    .sprite-area { order: -1; }
+    .trainer-card { min-width: 100%; }
+    #timer-bar-bg { width: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div id="attack-flash"></div>
+
+<div id="game-container">
+  <div id="header">
+    <h1>⚡ Liga Pokémon del Saber ⚡</h1>
+    <p>6to EGB — Ciencias Naturales</p>
+  </div>
+
+  <!-- INTRO SCREEN -->
+  <div id="intro-screen" class="screen active">
+    <div class="intro-pokemon">⚡</div>
+    <div class="intro-title">¡Batalla Final!</div>
+    <p class="intro-sub">El Líder <strong style="color:#ff6b6b">Lt. Surge</strong> te desafía.<br>Demuestra tu conocimiento de Ciencias Naturales y ¡conviértete en el Gran Maestro del Saber!</p>
+    <ul class="intro-rules">
+      <li>⚡ <span>10 preguntas</span> de opción múltiple</li>
+      <li>⏱️ <span>20 segundos</span> por pregunta</li>
+      <li>🟡 Respuesta correcta: <span>+10 PokéCoins</span></li>
+      <li>💥 La barra de vida del enemigo <span>baja 10%</span> por acierto</li>
+      <li>❌ Si fallas, se muestra la <span>respuesta correcta</span></li>
+      <li>🏆 Puntaje máximo: <span>100 PokéCoins</span></li>
+    </ul>
+    <button class="start-btn" onclick="startGame()">¡COMENZAR BATALLA!</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen">
+    <!-- Progress bar -->
+    <div id="progress-bar-bg"><div id="progress-bar"></div></div>
+
+    <!-- Battlefield -->
+    <div id="battlefield">
+      <div class="battle-row">
+        <!-- Enemy trainer -->
+        <div class="trainer-card enemy">
+          <div class="trainer-name">⚡ Lt. Surge</div>
+          <div class="hp-label">HP del Enemigo</div>
+          <div class="hp-bar-bg">
+            <div class="hp-bar-fill enemy-hp" id="enemy-hp-bar" style="width:100%"></div>
+          </div>
+          <div class="hp-text" id="enemy-hp-text">100 / 100</div>
+        </div>
+
+        <!-- Sprites -->
+        <div class="sprite-area">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
+            <div class="pokemon-sprite enemy-sprite" id="enemy-sprite">⚡🐲</div>
+            <div style="font-size:0.65rem; color:#666; text-transform:uppercase; letter-spacing:1px;">vs</div>
+            <div class="pokemon-sprite" id="player-sprite">🔬🦅</div>
+          </div>
+        </div>
+
+        <!-- Player trainer -->
+        <div class="trainer-card">
+          <div class="trainer-name">🔬 Investigador</div>
+          <div id="coins-display">
+            <div class="coin-label">PokéCoins</div>
+            <div class="coin-value" id="coins-text">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question Panel -->
+    <div id="question-panel">
+      <div id="q-meta">
+        <div id="q-number">Pregunta 1 / 10</div>
+        <div id="timer-wrap">
+          <div id="timer-bar-bg"><div id="timer-bar"></div></div>
+          <div id="timer-text">20</div>
+        </div>
+      </div>
+
+      <div id="question-text">Cargando pregunta...</div>
+
+      <div id="options-grid">
+        <button class="option-btn" id="opt-0" onclick="selectAnswer(0)">
+          <span class="opt-letter">A</span><span class="opt-text"></span>
+        </button>
+        <button class="option-btn" id="opt-1" onclick="selectAnswer(1)">
+          <span class="opt-letter">B</span><span class="opt-text"></span>
+        </button>
+        <button class="option-btn" id="opt-2" onclick="selectAnswer(2)">
+          <span class="opt-letter">C</span><span class="opt-text"></span>
+        </button>
+        <button class="option-btn" id="opt-3" onclick="selectAnswer(3)">
+          <span class="opt-letter">D</span><span class="opt-text"></span>
+        </button>
+      </div>
+
+      <div id="feedback-msg"></div>
+      <div style="text-align:center">
+        <button id="next-btn" onclick="nextQuestion()">SIGUIENTE ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL SCREEN -->
+  <div id="final-screen" class="screen">
+    <div class="final-trophy" id="final-trophy">🏆</div>
+    <div class="final-title" id="final-title">¡Misión Completada!</div>
+    <p class="final-sub" id="final-sub">¡Has completado la Liga Pokémon del Saber!</p>
+
+    <!-- MEDAL REVEAL -->
+    <div id="medal-container">
+      <!-- Si tienes la imagen PNG de la medalla de Canva, reemplaza el src abajo -->
+      <!-- Si no hay imagen, se muestra el CSS medal automáticamente -->
+      <img id="medal-img" src="" alt="Medalla Trueno" 
+           onerror="this.style.display='none'; document.getElementById('css-medal').style.display='flex';"
+           style="display:none;">
+      <div class="css-medal" id="css-medal" style="display:none;">⚡</div>
+      <div class="medal-label">🏅 ¡Medalla Trueno obtenida!</div>
+      <div class="medal-subtitle">Gimnasio 4 · Lt. Surge · Liga Pokémon del Saber</div>
+    </div>
+
+    <div class="final-score-box">
+      <div class="final-score-num" id="final-score">0</div>
+      <div class="final-score-label">PokéCoins obtenidos</div>
+    </div>
+
+    <br>
+    <div class="final-level" id="final-level">Nivel</div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num" id="stat-correct">0</div>
+        <div class="stat-lbl">Correctas</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-wrong">0</div>
+        <div class="stat-lbl">Incorrectas</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-pct">0%</div>
+        <div class="stat-lbl">Precisión</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-rank">⭐</div>
+        <div class="stat-lbl">Estrellas</div>
+      </div>
+    </div>
+
+    <button class="replay-btn" onclick="resetGame()">↺ VOLVER A JUGAR</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    text: "¿Cuál de estas es una función vital de los seres vivos?",
+    options: ["Oxidarse", "Reproducirse", "Evaporarse", "Solidificarse"],
+    correct: 1,
+    feedback: "¡Correcto! La reproducción es una función vital de todos los seres vivos.",
+    feedbackWrong: "La respuesta correcta es: Reproducirse — es una función vital fundamental."
+  },
+  {
+    text: "¿Qué función realiza un árbol cuando absorbe luz solar para producir su alimento?",
+    options: ["Relación", "Reproducción", "Nutrición", "Excreción"],
+    correct: 2,
+    feedback: "¡Excelente! La fotosíntesis es parte de la función de nutrición.",
+    feedbackWrong: "La respuesta correcta es: Nutrición — absorber luz para producir alimento es una función de nutrición."
+  },
+  {
+    text: "¿A qué reino pertenece un hongo?",
+    options: ["Animal", "Vegetal", "Monera", "Fungi"],
+    correct: 3,
+    feedback: "¡Perfecto! Los hongos pertenecen al Reino Fungi.",
+    feedbackWrong: "La respuesta correcta es: Fungi — los hongos tienen su propio reino."
+  },
+  {
+    text: "¿Cuántos reinos tienen los seres vivos según la clasificación moderna?",
+    options: ["3", "4", "5", "6"],
+    correct: 2,
+    feedback: "¡Brillante! La clasificación moderna reconoce 5 reinos.",
+    feedbackWrong: "La respuesta correcta es: 5 — Animal, Vegetal, Fungi, Protista y Monera."
+  },
+  {
+    text: "¿Qué tipo de adaptación es el pelaje grueso del oso de anteojos del Ecuador?",
+    options: ["Conductual", "Fisiológica", "Morfológica", "Social"],
+    correct: 2,
+    feedback: "¡Correcto! El pelaje grueso es una adaptación morfológica (estructura del cuerpo).",
+    feedbackWrong: "La respuesta correcta es: Morfológica — se refiere a cambios físicos en la estructura del cuerpo."
+  },
+  {
+    text: "La iguana marina de Galápagos puede bucear para buscar algas. ¿Qué tipo de adaptación es esta?",
+    options: ["Morfológica", "Conductual", "Fisiológica", "Nutricional"],
+    correct: 1,
+    feedback: "¡Genial! Bucear para buscar alimento es un comportamiento, por eso es conductual.",
+    feedbackWrong: "La respuesta correcta es: Conductual — bucear es un comportamiento aprendido/adaptado."
+  },
+  {
+    text: "¿Cuál de estos ecosistemas del Ecuador tiene la mayor biodiversidad?",
+    options: ["Desierto costero", "Páramo", "Amazonía", "Playas"],
+    correct: 2,
+    feedback: "¡Exacto! La Amazonía ecuatoriana es uno de los ecosistemas más biodiversos del planeta.",
+    feedbackWrong: "La respuesta correcta es: Amazonía — tiene la mayor diversidad de especies."
+  },
+  {
+    text: "¿Qué característica tiene el Reino Monera que lo diferencia de todos los demás?",
+    options: ["Son pluricelulares", "No tienen núcleo definido", "Solo viven en agua", "Producen su propio alimento"],
+    correct: 1,
+    feedback: "¡Correcto! Los organismos del Reino Monera son procariotas: no tienen núcleo definido.",
+    feedbackWrong: "La respuesta correcta es: No tienen núcleo definido — son organismos procariotas."
+  },
+  {
+    text: "¿Qué relación existe entre el colibrí y la flor en los Andes ecuatorianos?",
+    options: ["Parasitismo", "Depredación", "Mutualismo", "Competencia"],
+    correct: 2,
+    feedback: "¡Brillante! Es mutualismo: el colibrí obtiene néctar y poliniza la flor. ¡Ambos se benefician!",
+    feedbackWrong: "La respuesta correcta es: Mutualismo — ambos organismos se benefician de la relación."
+  },
+  {
+    text: "¿Cuál es el ecosistema único del Ecuador reconocido como Patrimonio Natural de la Humanidad por su biodiversidad?",
+    options: ["El Amazonas", "Las Islas Galápagos", "El Parque Cotopaxi", "La Reserva Cotacachi"],
+    correct: 1,
+    feedback: "¡PERFECTO! Las Islas Galápagos son Patrimonio Natural de la Humanidad por la UNESCO.",
+    feedbackWrong: "La respuesta correcta es: Las Islas Galápagos — reconocidas por la UNESCO."
+  }
+];
+
+const ENEMY_SPRITES = ["⚡🐲","⚡🦁","⚡🐯","⚡🦊"];
+const PLAYER_SPRITES = ["🔬🦅","🔬🦋","🔬🌿","🔬⚗️"];
+
+let currentQ = 0;
+let score = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+let timerInterval = null;
+let timeLeft = 20;
+let enemyHP = 100;
+
+function generateStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;
+    container.appendChild(s);
+  }
+}
+
+function startGame() {
+  document.getElementById('intro-screen').classList.remove('active');
+  document.getElementById('game-screen').classList.add('active');
+  document.getElementById('enemy-sprite').textContent = ENEMY_SPRITES[0];
+  document.getElementById('player-sprite').textContent = PLAYER_SPRITES[0];
+  currentQ = 0;
+  score = 0;
+  correct = 0;
+  wrong = 0;
+  enemyHP = 100;
+  updateCoinDisplay();
+  updateEnemyHP();
+  loadQuestion();
+}
+
+function loadQuestion() {
+  if (currentQ >= QUESTIONS.length) { endGame(); return; }
+
+  const q = QUESTIONS[currentQ];
+  answered = false;
+
+  document.getElementById('q-number').textContent = `Pregunta ${currentQ + 1} / ${QUESTIONS.length}`;
+  document.getElementById('question-text').textContent = q.text;
+  document.getElementById('feedback-msg').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('progress-bar').style.width = `${(currentQ / QUESTIONS.length) * 100}%`;
+
+  const letters = ['A', 'B', 'C', 'D'];
+  for (let i = 0; i < 4; i++) {
+    const btn = document.getElementById(`opt-${i}`);
+    btn.querySelector('.opt-letter').textContent = letters[i];
+    btn.querySelector('.opt-text').textContent = q.options[i];
+    btn.className = 'option-btn';
+    btn.disabled = false;
+  }
+
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 20;
+  updateTimerDisplay();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      onTimeout();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  document.getElementById('timer-text').textContent = timeLeft;
+  const pct = (timeLeft / 20) * 100;
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = pct + '%';
+  if (timeLeft > 10) bar.style.background = '#00e676';
+  else if (timeLeft > 5) bar.style.background = '#ff9800';
+  else bar.style.background = '#ff4444';
+}
+
+function onTimeout() {
+  if (answered) return;
+  answered = true;
+  disableOptions();
+  const q = QUESTIONS[currentQ];
+  document.getElementById(`opt-${q.correct}`).classList.add('reveal-correct');
+  showFeedback('timeout', `⏱️ ¡Tiempo agotado! La respuesta correcta era: ${q.options[q.correct]}`);
+  wrong++;
+  document.getElementById('next-btn').style.display = 'inline-block';
+  flashScreen('incorrect');
+  animateHit('player');
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+  disableOptions();
+
+  const q = QUESTIONS[currentQ];
+  const btn = document.getElementById(`opt-${idx}`);
+
+  if (idx === q.correct) {
+    btn.classList.add('correct');
+    score += 10;
+    correct++;
+    enemyHP = Math.max(0, enemyHP - 10);
+    updateCoinDisplay();
+    updateEnemyHP();
+    showFeedback('correct', `⚡ ¡ATAQUE EFECTIVO! ${q.feedback}`);
+    flashScreen('correct');
+    animateHit('enemy');
+  } else {
+    btn.classList.add('incorrect');
+    document.getElementById(`opt-${q.correct}`).classList.add('reveal-correct');
+    wrong++;
+    showFeedback('incorrect', `❌ ¡Fallaste! ${q.feedbackWrong}`);
+    flashScreen('incorrect');
+    animateHit('player');
+  }
+
+  document.getElementById('next-btn').style.display = 'inline-block';
+}
+
+function disableOptions() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById(`opt-${i}`).disabled = true;
+  }
+}
+
+function showFeedback(type, msg) {
+  const el = document.getElementById('feedback-msg');
+  el.className = `feedback-msg ${type}`;
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+
+function flashScreen(type) {
+  const el = document.getElementById('attack-flash');
+  el.className = `flash-${type}`;
+  el.style.opacity = 1;
+  setTimeout(() => { el.style.opacity = 0; }, 300);
+}
+
+function animateHit(target) {
+  const id = target === 'enemy' ? 'enemy-sprite' : 'player-sprite';
+  const el = document.getElementById(id);
+  el.classList.remove('sprite-shake', 'sprite-hit');
+  void el.offsetWidth;
+  el.classList.add(target === 'enemy' ? 'sprite-shake' : 'sprite-hit');
+  setTimeout(() => el.classList.remove('sprite-shake', 'sprite-hit'), 500);
+}
+
+function updateCoinDisplay() {
+  document.getElementById('coins-text').textContent = score;
+}
+
+function updateEnemyHP() {
+  const bar = document.getElementById('enemy-hp-bar');
+  const txt = document.getElementById('enemy-hp-text');
+  bar.style.width = enemyHP + '%';
+  txt.textContent = `${enemyHP} / 100`;
+  if (enemyHP <= 30) bar.style.background = 'linear-gradient(90deg,#ff4444,#ff8c00)';
+  else if (enemyHP <= 60) bar.style.background = 'linear-gradient(90deg,#ff9800,#ffc107)';
+}
+
+function nextQuestion() {
+  currentQ++;
+  loadQuestion();
+}
+
+function endGame() {
+  clearInterval(timerInterval);
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('game-screen').classList.remove('active');
+
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('stat-correct').textContent = correct;
+  document.getElementById('stat-wrong').textContent = wrong;
+  document.getElementById('stat-pct').textContent = Math.round((correct / 10) * 100) + '%';
+
+  let stars = '⭐';
+  if (score >= 80) stars = '⭐⭐⭐';
+  else if (score >= 60) stars = '⭐⭐';
+  document.getElementById('stat-rank').textContent = stars;
+
+  const levelEl = document.getElementById('final-level');
+  const trophyEl = document.getElementById('final-trophy');
+  const medalContainer = document.getElementById('medal-container');
+  const medalImg = document.getElementById('medal-img');
+  const cssMedal = document.getElementById('css-medal');
+
+  if (score === 100) {
+    levelEl.textContent = '🏆 Gran Maestro del Saber';
+    levelEl.className = 'final-level level-gran-maestro';
+    trophyEl.textContent = '🏆';
+    document.getElementById('final-title').textContent = '¡GRAN MAESTRO DEL SABER!';
+    document.getElementById('final-sub').textContent = '¡Puntaje perfecto! ¡Lt. Surge ha sido derrotado!';
+    launchConfetti('gold');
+    showMedal(medalContainer, medalImg, cssMedal, 300);
+  } else if (score >= 80) {
+    levelEl.textContent = '🌟 Maestro Pokémon';
+    levelEl.className = 'final-level level-maestro';
+    trophyEl.textContent = '🌟';
+    document.getElementById('final-title').textContent = '¡Maestro Pokémon!';
+    document.getElementById('final-sub').textContent = '¡Excelente batalla! ¡Has ganado la Medalla Trueno!';
+    launchConfetti('purple');
+    showMedal(medalContainer, medalImg, cssMedal, 300);
+  } else if (score >= 50) {
+    levelEl.textContent = '🔵 Entrenador Experto';
+    levelEl.className = 'final-level level-experto';
+    trophyEl.textContent = '🔵';
+    document.getElementById('final-title').textContent = '¡Misión Completada!';
+    document.getElementById('final-sub').textContent = '¡Has superado el Gimnasio Eléctrico! ¡Medalla Trueno ganada!';
+    launchConfetti('blue');
+    showMedal(medalContainer, medalImg, cssMedal, 300);
+  } else {
+    levelEl.textContent = '⚪ Entrenador Novato';
+    levelEl.className = 'final-level level-novato';
+    trophyEl.textContent = '🎓';
+    document.getElementById('final-title').textContent = 'Sigue entrenando...';
+    document.getElementById('final-sub').textContent = 'Obtén al menos 50 PokéCoins para ganar la Medalla Trueno. ¡Tú puedes!';
+  }
+
+  document.getElementById('final-screen').classList.add('active');
+}
+
+function showMedal(container, imgEl, cssEl, delay) {
+  setTimeout(() => {
+    container.style.display = 'flex';
+    // Intenta cargar la imagen de la medalla desde Canva
+    // INSTRUCCIÓN: reemplaza la URL de abajo con el enlace directo PNG de tu medalla Trueno de Canva
+    const medalUrl = 'AQUI_VA_EL_URL_DIRECTO_DE_LA_MEDALLA_TRUENO_PNG';
+    if (medalUrl !== 'AQUI_VA_EL_URL_DIRECTO_DE_LA_MEDALLA_TRUENO_PNG') {
+      imgEl.src = medalUrl;
+      imgEl.style.display = 'block';
+    } else {
+      cssEl.style.display = 'flex';
+    }
+  }, delay);
+}
+
+function launchConfetti(theme) {
+  const colors = {
+    gold: ['#FFD700', '#FFA500', '#FFEC1C', '#fff'],
+    purple: ['#ab47bc', '#ce93d8', '#FFD700', '#fff'],
+    blue: ['#1e88e5', '#64b5f6', '#FFD700', '#fff']
+  }[theme] || ['#FFD700', '#fff'];
+
+  const duration = theme === 'gold' ? 4000 : 2500;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0 }, colors });
+    confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 }, colors });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+
+  if (theme === 'gold') {
+    setTimeout(() => {
+      confetti({ particleCount: 120, spread: 100, origin: { y: 0.5 }, colors });
+    }, 500);
+  }
+}
+
+function resetGame() {
+  document.getElementById('final-screen').classList.remove('active');
+  startGame();
+}
+
+generateStars();
+</script>
+</body>
+</html>
